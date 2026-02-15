@@ -1,4 +1,4 @@
-// Demo toggle effect
+// Demo toggle effect for index.html only
 setInterval(() => {
   const slot1 = document.getElementById("slot1");
 
