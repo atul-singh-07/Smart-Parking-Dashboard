@@ -2,99 +2,26 @@
 <html>
 <head>
   <title>Smart Parking Dashboard</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #121212;
-      color: #fff;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 20px;
-    }
-    h1 {
-      color: #00ff99;
-    }
-    .sensor {
-      margin: 10px;
-      padding: 20px;
-      width: 200px;
-      text-align: center;
-      border-radius: 10px;
-      font-size: 20px;
-      font-weight: bold;
-    }
-    .occupied {
-      background: #ff4d4d;
-    }
-    .free {
-      background: #4dff88;
-    }
-    pre {
-      background: #1e1e1e;
-      padding: 15px;
-      border-radius: 8px;
-      width: 400px;
-      overflow-x: auto;
-    }
-    .check {
-      color: #00ff99;
-      font-size: 24px;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Smart Parking Dashboard</h1>
-  <div id="check" class="check">❌ No Data Yet</div>
-  <div id="sensors">
-    <div id="sensor1" class="sensor">Sensor 1: --</div>
-    <div id="sensor2" class="sensor">Sensor 2: --</div>
+
+  <div class="container">
+    <h1>🚗 Smart Parking Dashboard</h1>
+
+    <div class="parking-grid">
+      <div class="slot available" id="slot1">
+        <h2>Slot 1</h2>
+        <p class="status">--</p>
+      </div>
+
+      <div class="slot available" id="slot2">
+        <h2>Slot 2</h2>
+        <p class="status">--</p>
+      </div>
+    </div>
   </div>
-  <h2>Firebase JSON</h2>
-  <pre id="json">Loading...</pre>
 
-  <script>
-    const firebaseURL = 'https://smart-parking-system-e3686-default-rtdb.asia-southeast1.firebasedatabase.app/parking.json';
-
-    async function updateDashboard() {
-      try {
-        const res = await fetch(firebaseURL);
-        const data = await res.json();
-
-        const sensor1El = document.getElementById('sensor1');
-        const sensor2El = document.getElementById('sensor2');
-        const jsonEl = document.getElementById('json');
-        const checkEl = document.getElementById('check');
-
-        if (data) {
-          // Update checkmark
-          checkEl.textContent = '✅ Data Loaded';
-
-          // Update sensors
-          sensor1El.textContent = `Sensor 1: ${data.sensor1 === 1 ? 'Occupied' : 'Free'}`;
-          sensor2El.textContent = `Sensor 2: ${data.sensor2 === 1 ? 'Occupied' : 'Free'}`;
-
-          sensor1El.className = `sensor ${data.sensor1 === 1 ? 'occupied' : 'free'}`;
-          sensor2El.className = `sensor ${data.sensor2 === 1 ? 'occupied' : 'free'}`;
-
-          // Pretty-print JSON
-          jsonEl.textContent = JSON.stringify(data, null, 2);
-        } else {
-          checkEl.textContent = '❌ No Data Yet';
-          sensor1El.textContent = 'Sensor 1: --';
-          sensor2El.textContent = 'Sensor 2: --';
-          jsonEl.textContent = 'null';
-        }
-      } catch (err) {
-        console.error(err);
-      }
-    }
-
-    // Initial load
-    updateDashboard();
-
-    // Refresh every 5 seconds
-    setInterval(updateDashboard, 5000);
-  </script>
+  <script src="dashboard.js"></script>
 </body>
 </html>
