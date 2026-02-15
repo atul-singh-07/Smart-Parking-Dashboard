@@ -16,9 +16,23 @@ async function updateDashboard() {
       // Update Slot 2
       slot2.querySelector(".status").innerText = data.sensor2 === 1 ? "Occupied" : "Available";
       slot2.className = `slot ${data.sensor2 === 1 ? "occupied" : "available"}`;
+    } else {
+      // If Firebase returns null
+      slot1.querySelector(".status").innerText = "No Data";
+      slot1.className = "slot available";
+
+      slot2.querySelector(".status").innerText = "No Data";
+      slot2.className = "slot available";
     }
   } catch (err) {
     console.error("Error fetching data:", err);
+
+    // Show error on dashboard
+    const slot1 = document.getElementById("slot1");
+    const slot2 = document.getElementById("slot2");
+
+    slot1.querySelector(".status").innerText = "Error";
+    slot2.querySelector(".status").innerText = "Error";
   }
 }
 
