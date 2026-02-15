@@ -1,15 +1,26 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Smart Parking System</title>
+  <title>Smart Parking Dashboard</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <h1>Smart Parking Dashboard</h1>
+  <div class="container">
+    <h1>🚗 Smart Parking Dashboard</h1>
 
-  <div id="slot1" class="slot">Slot 1</div>
-  <div id="slot2" class="slot">Slot 2</div>
+    <div class="parking-grid">
+      <div class="slot available" id="slot1">
+        <h2>Slot 1</h2>
+        <p class="status">Available</p>
+      </div>
+
+      <div class="slot occupied" id="slot2">
+        <h2>Slot 2</h2>
+        <p class="status">Occupied</p>
+      </div>
+    </div>
+  </div>
 
   <script src="script.js"></script>
 </body>
