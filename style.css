@@ -1,52 +1,84 @@
 body {
   margin: 0;
-  font-family: 'Segoe UI', sans-serif;
-  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #141e30, #243b55);
   color: white;
+  text-align: center;
+}
+
+/* Landing Page */
+.landing {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
+  height: 100vh;
 }
 
-.container {
-  text-align: center;
-  width: 80%;
+.landing-container h1 {
+  font-size: 48px;
+  margin-bottom: 10px;
 }
 
-h1 {
-  margin-bottom: 40px;
-  font-size: 2.5rem;
+.landing-container p {
+  margin-bottom: 30px;
+  font-size: 18px;
 }
 
-.parking-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 30px;
+.btn {
+  background: white;
+  color: #243b55;
+  padding: 15px 30px;
+  text-decoration: none;
+  border-radius: 10px;
+  font-weight: bold;
+  transition: 0.3s;
 }
 
-.slot {
-  padding: 30px;
-  border-radius: 20px;
+.btn:hover {
+  background: #00c6ff;
+  color: white;
+}
+
+/* Dashboard */
+.title {
+  margin-top: 40px;
+}
+
+.dashboard {
+  display: flex;
+  justify-content: center;
+  gap: 50px;
+  margin-top: 60px;
+}
+
+.card {
+  background: rgba(255,255,255,0.1);
+  padding: 40px;
+  border-radius: 15px;
+  width: 250px;
   backdrop-filter: blur(10px);
-  background: rgba(255, 255, 255, 0.08);
-  transition: 0.3s ease;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-}
-
-.slot:hover {
-  transform: translateY(-10px);
-}
-
-.available {
-  border: 2px solid #00ff99;
-}
-
-.occupied {
-  border: 2px solid #ff4d4d;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
 }
 
 .status {
-  font-size: 1.2rem;
-  margin-top: 10px;
+  font-size: 26px;
+  font-weight: bold;
+  margin-top: 20px;
+}
+
+.loading {
+  color: yellow;
+}
+
+.occupied {
+  color: red;
+}
+
+.available {
+  color: lightgreen;
+}
+
+footer {
+  margin-top: 100px;
+  opacity: 0.7;
 }
