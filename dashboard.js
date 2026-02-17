@@ -1,43 +1,39 @@
-const firebaseURL = 'https://smart-parking-system-e3686-default-rtdb.asia-southeast1.firebasedatabase.app/parking.json';
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-async function updateDashboard() {
-  try {
-    const res = await fetch(firebaseURL);
-    const data = await res.json();
+// Firebase config
+const firebaseConfig = {
+  apiKey: "AIzaSyDPPCKJM6WQvsVFisQ5SbqBgvWuSt9AYtQ",
+  authDomain: "smart-parking-system-1cf2a.firebaseapp.com",
+  databaseURL: "https://smart-parking-system-1cf2a-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "smart-parking-system-1cf2a",
+  storageBucket: "smart-parking-system-1cf2a.firebasestorage.app",
+  messagingSenderId: "1006250338223",
+  appId: "1:1006250338223:web:fd1d57aadeb59c4827315a"
+};
 
-    const slot1 = document.getElementById("slot1");
-    const slot2 = document.getElementById("slot2");
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const database = getDatabase(app);
 
-    if (data) {
-      // Update Slot 1
-      slot1.querySelector(".status").innerText = data.sensor1 === 1 ? "Occupied" : "Available";
-      slot1.className = `slot ${data.sensor1 === 1 ? "occupied" : "available"}`;
+// Reference to slot1
+const slotRef = ref(database, "slot1");
 
-      // Update Slot 2
-      slot2.querySelector(".status").innerText = data.sensor2 === 1 ? "Occupied" : "Available";
-      slot2.className = `slot ${data.sensor2 === 1 ? "occupied" : "available"}`;
-    } else {
-      // If Firebase returns null
-      slot1.querySelector(".status").innerText = "No Data";
-      slot1.className = "slot available";
+onValue(slotRef, (snapshot) => {
+  const value = snapshot.val();
 
-      slot2.querySelector(".status").innerText = "No Data";
-      slot2.className = "slot available";
-    }
-  } catch (err) {
-    console.error("Error fetching data:", err);
+  const slotElement = document.getElementById("slot1");
+  const availableElement = document.getElementById("available");
 
-    // Show error on dashboard
-    const slot1 = document.getElementById("slot1");
-    const slot2 = document.getElementById("slot2");
-
-    slot1.querySelector(".status").innerText = "Error";
-    slot2.querySelector(".status").innerText = "Error";
+  if (value === 1) {
+    slotElement.textContent = "❌ Occupied";
+    slotElement.className = "status occupied";
+    availableElement.textContent = "0";
+    availableElement.className = "status occupied";
+  } else {
+    slotElement.textContent = "✅ Available";
+    slotElement.className = "status available";
+    availableElement.textContent = "1";
+    availableElement.className = "status available";
   }
-}
-
-// Initial load
-updateDashboard();
-
-// Refresh every 5 seconds
-setInterval(updateDashboard, 5000);
+});
