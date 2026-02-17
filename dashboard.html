@@ -1,28 +1,31 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Smart Parking Dashboard</title>
+  <title>Parking Dashboard</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <div class="container">
-    <h1>🚗 Smart Parking Dashboard</h1>
+  <h1 class="title">🚗 Live Smart Parking Dashboard</h1>
 
-    <div class="parking-grid">
-      <div class="slot available" id="slot1">
-        <h2>Slot 1</h2>
-        <p class="status">--</p>
-      </div>
+  <div class="dashboard">
 
-      <div class="slot available" id="slot2">
-        <h2>Slot 2</h2>
-        <p class="status">--</p>
-      </div>
+    <div class="card">
+      <h2>Slot 1</h2>
+      <div id="slot1" class="status loading">Loading...</div>
     </div>
+
+    <div class="card">
+      <h2>Available Slots</h2>
+      <div id="available" class="status loading">Loading...</div>
+    </div>
+
   </div>
 
-  <!-- Include dashboard.js -->
-  <script src="dashboard.js"></script>
+  <footer>
+    <p>Powered by ESP32 + Firebase + GitHub Pages</p>
+  </footer>
+
+  <script type="module" src="dashboard.js"></script>
 </body>
 </html>
