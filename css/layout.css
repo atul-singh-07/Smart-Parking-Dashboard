@@ -29,3 +29,47 @@
   gap:20px;
   align-items:center;
 }
+/* Navbar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 8%;
+  background: #111827;
+}
+
+.navbar .logo {
+  font-size: 22px;
+  font-weight: 700;
+  color: white;
+}
+
+.navbar nav a {
+  margin-left: 20px;
+  text-decoration: none;
+  color: #d1d5db;
+}
+
+.navbar nav a:hover {
+  color: white;
+}
+
+/* Hero */
+.hero {
+  height: 80vh;
+  background: linear-gradient(to right, #1e3a8a, #2563eb);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: white;
+}
+
+.hero-content h1 {
+  font-size: 40px;
+  margin-bottom: 20px;
+}
+
+.hero-content p {
+  margin-bottom: 25px;
+}
