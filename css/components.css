@@ -1,1 +1,39 @@
+.slot-column{
+  display:flex;
+  flex-direction:column;
+  gap:20px;
+}
 
+.road{
+  background:#1e293b;
+  height:100%;
+  border-radius:10px;
+}
+
+.slot{
+  height:90px;
+  border-radius:20px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  backdrop-filter:blur(8px);
+  background:var(--glass);
+  border:2px solid var(--border);
+  transition:0.3s ease;
+}
+
+.slot:hover{
+  transform:translateY(-5px) scale(1.05);
+}
+
+.available{
+  border-color:var(--success);
+}
+
+.occupied{
+  border-color:var(--danger);
+}
+
+.slot img{
+  width:35px;
+}
