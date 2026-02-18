@@ -1,1 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Smart Parking System</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+  <!-- CSS -->
+  <link rel="stylesheet" href="../src/css/theme.css" />
+  <link rel="stylesheet" href="../src/css/base.css" />
+  <link rel="stylesheet" href="../src/css/layout.css" />
+  <link rel="stylesheet" href="../src/css/components.css" />
+  <link rel="stylesheet" href="../src/css/animations.css" />
+</head>
+<body>
+
+  <div class="app-container">
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <!-- Main -->
+    <main class="main-content">
+      <header class="topbar">
+        <h1>Smart Parking Dashboard</h1>
+        <div class="counter" id="slotCounter"></div>
+      </header>
+
+      <section class="parking-grid" id="parkingGrid"></section>
+    </main>
+
+  </div>
+
+  <script type="module" src="../src/js/core/app.js"></script>
+</body>
+</html>
