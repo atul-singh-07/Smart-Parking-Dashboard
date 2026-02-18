@@ -1,40 +1,39 @@
 import { db } from "./firebase-config.js";
-import { ref, onValue } 
-from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+import { ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-const grid = document.getElementById("parkingGrid");
+const locationSelect = document.getElementById("locationSelect");
+const availableCount = document.getElementById("availableCount");
 
-let totalSlots = 12;
+function loadLocation(location) {
 
-for (let i = 1; i <= totalSlots; i++) {
-  const slot = document.createElement("div");
-  slot.className = "slot";
-  slot.id = "slot" + i;
-  slot.innerText = "Slot " + i;
-  grid.appendChild(slot);
+  const locationRef = ref(db, "locations/" + location);
+
+  onValue(locationRef, (snapshot) => {
+    const data = snapshot.val();
+    if (!data) return;
+
+    availableCount.innerText = data.availableSlots;
+
+    updateSlot("slot1", data.slots.slot1);
+    updateSlot("slot2", data.slots.slot2);
+  });
 }
 
-onValue(ref(db, "parking/slots"), snapshot => {
+function updateSlot(slotId, value) {
+  const slot = document.getElementById(slotId);
 
-  let available = totalSlots;
-
-  for (let i = 1; i <= totalSlots; i++) {
-    const slotDiv = document.getElementById("slot" + i);
-    let occupied = 0;
-
-    if (snapshot.exists() && snapshot.val()["slot" + i] !== undefined) {
-      occupied = snapshot.val()["slot" + i];
-    } else {
-      occupied = Math.random() > 0.7 ? 1 : 0;
-    }
-
-    if (occupied == 1) {
-      slotDiv.classList.add("occupied");
-      available--;
-    } else {
-      slotDiv.classList.remove("occupied");
-    }
+  if (value === 1) {
+    slot.className = "slot occupied";
+    slot.innerHTML = "<img src='assets/car.png' width='80'>";
+  } else {
+    slot.className = "slot empty";
+    slot.innerHTML = "";
   }
+}
 
-  document.getElementById("availableSlots").innerText = available;
+locationSelect.addEventListener("change", () => {
+  loadLocation(locationSelect.value);
 });
+
+// Load default
+loadLocation("ambience_mall");
