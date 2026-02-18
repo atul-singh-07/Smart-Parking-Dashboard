@@ -1,20 +1,26 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Smart Parking Login</title>
+  <title>Login - SmartPark</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body class="center">
 
-<div class="glass-card">
-  <h2>Smart Parking Admin</h2>
-  <input type="email" id="email" placeholder="Email">
-  <input type="password" id="password" placeholder="Password">
-  <button onclick="login()">Login</button>
-  <p id="error"></p>
+<div class="card">
+  <h2>Login</h2>
+
+  <input type="email" id="loginEmail" placeholder="Email">
+  <input type="password" id="loginPassword" placeholder="Password">
+  <button id="loginBtn" class="btn">Login</button>
+
+  <hr>
+
+  <h3>Create Account</h3>
+  <input type="email" id="signupEmail" placeholder="Email">
+  <input type="password" id="signupPassword" placeholder="Password">
+  <button id="signupBtn" class="btn">Sign Up</button>
 </div>
 
-<script type="module" src="js/firebase-config.js"></script>
 <script type="module" src="js/auth.js"></script>
 </body>
 </html>
