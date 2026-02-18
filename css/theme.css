@@ -1,0 +1,8 @@
+:root{
+  --bg-dark:#0f172a;
+  --glass:rgba(255,255,255,0.06);
+  --border:rgba(255,255,255,0.15);
+  --success:#22c55e;
+  --danger:#ef4444;
+  --text-light:#f1f5f9;
+}
