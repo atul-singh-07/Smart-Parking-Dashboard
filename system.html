@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SmartPark | Smart Parking System</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins', sans-serif;
+}
+
+body{
+    background:#0d0d0d;
+    color:white;
+}
+
+/* NAVBAR */
+nav{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:20px 80px;
+    position:relative;
+}
+
+.logo{
+    font-size:24px;
+    font-weight:700;
+    color:#f4c430;
+}
+
+.nav-links{
+    list-style:none;
+    display:flex;
+    gap:35px;
+}
+
+.nav-links li a{
+    text-decoration:none;
+    color:white;
+    font-weight:500;
+    transition:0.3s;
+    position:relative;
+}
+
+.nav-links li a:hover,
+.nav-links li a.active{
+    color:#f4c430;
+}
+
+.nav-links li a::after{
+    content:"";
+    position:absolute;
+    left:0;
+    bottom:-5px;
+    width:0%;
+    height:2px;
+    background:#f4c430;
+    transition:0.3s;
+}
+
+.nav-links li a:hover::after{
+    width:100%;
+}
+
+.menu-toggle{
+    display:none;
+    font-size:26px;
+    cursor:pointer;
+}
+
+/* MOBILE NAV */
+@media(max-width:900px){
+    nav{
+        padding:20px;
+    }
+
+    .nav-links{
+        position:absolute;
+        top:70px;
+        right:0;
+        background:#111;
+        width:220px;
+        flex-direction:column;
+        text-align:center;
+        padding:20px 0;
+        display:none;
+        border-radius:8px;
+    }
+
+    .nav-links.active{
+        display:flex;
+    }
+
+    .menu-toggle{
+        display:block;
+    }
+}
+
+/* ABOUT SECTION */
+.about{
+    padding:80px;
+    background:#111;
+    min-height:90vh;
+    display:flex;
+    align-items:center;
+}
+
+.about-container{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    width:100%;
+}
+
+.about-left{
+    max-width:600px;
+}
+
+.about-left h1{
+    font-size:42px;
+    margin-bottom:20px;
+}
+
+.about-left h1 span{
+    color:#f4c430;
+}
+
+.about-left p{
+    margin-bottom:20px;
+    color:#ccc;
+    line-height:1.7;
+}
+
+.about-features{
+    margin-top:25px;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:15px;
+}
+
+.feature{
+    background:#1a1a1a;
+    padding:15px;
+    border-radius:8px;
+    transition:0.3s;
+    cursor:pointer;
+    text-align:center;
+}
+
+.feature:hover{
+    background:#f4c430;
+    color:black;
+}
+
+.about-right{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.about-box{
+    width:350px;
+    height:350px;
+    background:#f4c430;
+    border-radius:30px;
+    transform:rotate(10deg);
+    box-shadow:0 0 40px rgba(244,196,48,0.4);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.about-box::after{
+    content:"📊";
+    font-size:120px;
+    transform:rotate(-10deg);
+}
+
+/* FOOTER */
+footer{
+    text-align:center;
+    padding:20px;
+    background:#0d0d0d;
+    color:#aaa;
+}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+    .about-container{
+        flex-direction:column;
+        text-align:center;
+    }
+
+    .about-box{
+        margin-top:40px;
+    }
+
+    .about-features{
+        grid-template-columns:1fr;
+    }
+}
+
+/* POPUP */
+.popup-overlay{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.85);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    visibility:hidden;
+    opacity:0;
+    transition:0.3s;
+    z-index:1000;
+}
+
+.popup-overlay.active{
+    visibility:visible;
+    opacity:1;
+}
+
+.popup-box{
+    background:#111;
+    padding:40px;
+    border-radius:15px;
+    width:400px;
+    text-align:center;
+    border:2px solid #f4c430;
+    box-shadow:0 0 35px rgba(244,196,48,0.4);
+    animation:scaleUp 0.3s ease;
+}
+
+@keyframes scaleUp{
+    from{transform:scale(0.8);opacity:0;}
+    to{transform:scale(1);opacity:1;}
+}
+
+.popup-box h2{
+    color:#f4c430;
+    margin-bottom:20px;
+}
+
+.popup-box p{
+    color:#ccc;
+    margin-bottom:20px;
+}
+
+.btn{
+    background:#f4c430;
+    padding:12px 25px;
+    border:none;
+    border-radius:8px;
+    font-weight:600;
+    cursor:pointer;
+}
+
+.btn:hover{
+    background:white;
+}
+</style>
+</head>
+
+<body>
+
+<nav>
+<div class="logo">Smart Parking</div>
+
+<div class="menu-toggle" onclick="toggleMenu()">☰</div>
+
+<ul class="nav-links" id="navLinks">
+<li><a href="index.html">Home</a></li>
+<li><a href="about.html" class="active">About</a></li>
+<li><a href="booking.html">Booking</a></li>
+<li><a href="map.html">Map</a></li>
+<li><a href="login.html">Login</a></li>
+<li><a href="system.html">System Architecture</a></li>
+</ul>
+</nav>
+
+<section class="about">
+<div class="about-container">
+
+<div class="about-left">
+<h1>About <span>SmartPark</span></h1>
+
+<p>
+SmartPark is an IoT-based parking management system that uses ESP32 
+and ultrasonic sensors to detect vehicle presence and update slot 
+availability in real-time on the website.
+</p>
+
+<p>
+Our mission is to reduce traffic congestion, save fuel, and digitize 
+parking infrastructure with smart technology.
+</p>
+
+<div class="about-features">
+<div class="feature" onclick="openPopup('Real-Time Monitoring','Our system tracks parking slots in real time using ultrasonic sensors connected to ESP32.')">
+🚗 Real-Time Monitoring
+</div>
+
+<div class="feature" onclick="openPopup('IoT Sensors','Smart IoT sensors detect vehicle presence and send live data to the web dashboard.')">
+📡 IoT Sensors
+</div>
+
+<div class="feature" onclick="openPopup('Live Web Dashboard','The web dashboard updates instantly with slot availability and sensor status.')">
+🌐 Live Web Dashboard
+</div>
+
+<div class="feature" onclick="openPopup('Fast & Accurate','Our detection system ensures high accuracy and fast response time.')">
+⚡ Fast & Accurate
+</div>
+</div>
+</div>
+
+<div class="about-right">
+<div class="about-box"></div>
+</div>
+
+</div>
+</section>
+
+<footer>
+© 2026 SmartPark | Smart Parking Management System
+</footer>
+
+<div class="popup-overlay" id="popup">
+<div class="popup-box">
+<h2 id="popupTitle"></h2>
+<p id="popupContent"></p>
+<button class="btn" onclick="closePopup()">Close</button>
+</div>
+</div>
+
+<script>
+function toggleMenu(){
+    document.getElementById("navLinks").classList.toggle("active");
+}
+
+function openPopup(title, content){
+    document.getElementById("popupTitle").innerText = title;
+    document.getElementById("popupContent").innerText = content;
+    document.getElementById("popup").classList.add("active");
+}
+
+function closePopup(){
+    document.getElementById("popup").classList.remove("active");
+}
+</script>
+
+</body>
+</html>
