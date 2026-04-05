@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SmartPark — Live Map</title>
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+.map-page {
+  padding: 60px;
+  position: relative;
+  z-index: 1;
+  min-height: calc(100vh - 70px);
+}
+
+/* ── HEADER ── */
+.map-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 40px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.map-header-left h1 { color: var(--gold); font-size: 26px; }
+.map-header-left p  { color: var(--text-muted); font-size: 13px; margin-top: 4px; }
+
+/* ── STATS ROW ── */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 36px;
+}
+
+.stat-card.gold   .stat-value { color: var(--gold); }
+.stat-card.green  .stat-value { color: var(--green); }
+.stat-card.red    .stat-value { color: var(--red); }
+
+/* ── PARKING BANNER ── */
+.parking-banner {
+  padding: 14px 24px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 36px;
+  font-family: 'Orbitron', monospace;
+  letter-spacing: 0.5px;
+}
+
+.parking-banner.ok      { background: var(--green-dim);   border: 1px solid rgba(0,255,136,0.3);  color: var(--green); }
+.parking-banner.warning { background: var(--gold-dim);    border: 1px solid rgba(244,196,48,0.3); color: var(--gold); }
+.parking-banner.full    { background: var(--red-dim);     border: 1px solid rgba(255,51,85,0.3);  color: var(--red); }
+
+/* ── GRID ── */
+#map-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+/* ── SLOT CARD ── */
+.slot-card {
+  border-radius: 20px;
+  padding: 28px 20px;
+  text-align: center;
+  cursor: default;
+  transition: var(--transition);
+  animation: fadeUp 0.4s ease both;
+}
+
+@keyframes fadeUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+.slot-card.slot-available {
+  background: rgba(0,255,136,0.05);
+  border: 1px solid rgba(0,255,136,0.3);
+  box-shadow: 0 0 20px rgba(0,255,136,0.06);
+}
+
+.slot-card.slot-available:hover {
+  box-shadow: 0 0 30px rgba(0,255,136,0.15);
+  transform: translateY(-4px);
+}
+
+.slot-card.slot-occupied {
+  background: rgba(255,51,85,0.05);
+  border: 1px solid rgba(255,51,85,0.3);
+  box-shadow: 0 0 20px rgba(255,51,85,0.06);
+}
+
+.slot-number {
+  font-family: 'Orbitron', monospace;
+  font-size: 28px;
+  font-weight: 900;
+  margin-bottom: 12px;
+}
+
+.slot-available .slot-number { color: var(--green); }
+.slot-occupied  .slot-number { color: var(--red); }
+
+.slot-icon { font-size: 40px; margin-bottom: 10px; }
+
+.slot-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+.slot-available .slot-label { color: var(--green); }
+.slot-occupied  .slot-label { color: var(--red); }
+
+.slot-book-btn {
+  display: inline-block;
+  padding: 8px 20px;
+  background: var(--green-dim);
+  border: 1px solid rgba(0,255,136,0.4);
+  border-radius: 20px;
+  color: var(--green);
+  font-size: 11px;
+  font-weight: 600;
+  font-family: 'Orbitron', monospace;
+  letter-spacing: 0.5px;
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+.slot-book-btn:hover {
+  background: var(--green);
+  color: #000;
+}
+
+/* ── LEGEND ── */
+.legend {
+  display: flex;
+  gap: 24px;
+  margin-top: 36px;
+  flex-wrap: wrap;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.legend-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+}
+
+.legend-dot.green { background: var(--green); }
+.legend-dot.red   { background: var(--red); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 700px) {
+  .map-page { padding: 30px 16px; }
+  .stats-row { grid-template-columns: 1fr; }
+  .map-header { flex-direction: column; align-items: flex-start; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav>
+  <a href="index.html" class="logo">SMART<span>PARK</span></a>
+  <button class="nav-toggle">☰</button>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="booking.html">Booking</a></li>
+    <li><a href="map.html">Live Map</a></li>
+    <li><a href="dashboard.html">Dashboard</a></li>
+    <li><a href="login.html">Login</a></li>
+  </ul>
+</nav>
+
+<div class="map-page">
+
+  <!-- HEADER -->
+  <div class="map-header">
+    <div class="map-header-left">
+      <h1>Live Parking Map</h1>
+      <p>
+        <span class="pulse-dot" style="margin-right:6px"></span>
+        Real-time updates · Ambience Mall Parking
+      </p>
+    </div>
+    <a href="booking.html" class="btn btn-primary">
+      <i class="fas fa-parking"></i> Book a Slot
+    </a>
+  </div>
+
+  <!-- STATUS BANNER -->
+  <div class="parking-banner ok" id="parking-status">Connecting to live data…</div>
+
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="stat-card gold">
+      <div class="stat-icon">🅿️</div>
+      <div class="stat-value" id="stat-total">—</div>
+      <div class="stat-label">Total Slots</div>
+    </div>
+    <div class="stat-card green">
+      <div class="stat-icon">✅</div>
+      <div class="stat-value" id="stat-available">—</div>
+      <div class="stat-label">Available</div>
+    </div>
+    <div class="stat-card red">
+      <div class="stat-icon">🚗</div>
+      <div class="stat-value" id="stat-occupied">—</div>
+      <div class="stat-label">Occupied</div>
+    </div>
+  </div>
+
+  <!-- SLOT GRID -->
+  <div id="map-grid">
+    <div style="color:var(--text-muted);font-size:14px;padding:20px">
+      <span class="spinner"></span> Loading live data…
+    </div>
+  </div>
+
+  <!-- LEGEND -->
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot green"></div> Available — ready to book</div>
+    <div class="legend-item"><div class="legend-dot red"></div> Occupied — in use</div>
+  </div>
+
+</div>
+
+<footer>
+  <span class="footer-logo">SMARTPARK</span>
+  <span>© 2026 Smart Parking System</span>
+</footer>
+
+<script type="module">
+  import { initMap } from './js/map.js';
+  import './js/ui.js';
+  initMap();
+</script>
+</body>
+</html>

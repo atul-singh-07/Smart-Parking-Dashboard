@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SmartPark — Book a Slot</title>
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+.booking-page {
+  min-height: calc(100vh - 70px);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 60px 20px;
+  position: relative;
+  z-index: 1;
+}
+
+.booking-layout {
+  display: grid;
+  grid-template-columns: 420px 1fr;
+  gap: 30px;
+  width: 100%;
+  max-width: 900px;
+}
+
+/* ── BOOKING CARD ── */
+.booking-card {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  padding: 40px;
+  backdrop-filter: blur(12px);
+}
+
+.booking-card h2 {
+  font-size: 22px;
+  color: var(--gold);
+  margin-bottom: 6px;
+}
+
+.booking-card .sub {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 32px;
+}
+
+.select-wrap {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.select-wrap i {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--gold);
+  pointer-events: none;
+}
+
+.select-wrap select {
+  width: 100%;
+  padding: 14px 16px 14px 44px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--glass-border);
+  border-radius: 10px;
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  outline: none;
+  appearance: none;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.select-wrap select:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(244,196,48,0.1);
+}
+
+.select-wrap select option { background: #1a1a1a; }
+
+.or-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 16px 0;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.or-divider::before, .or-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--glass-border);
+}
+
+.booking-status {
+  margin-top: 16px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  display: none;
+}
+
+.booking-status.error {
+  display: block;
+  background: var(--red-dim);
+  border: 1px solid rgba(255,51,85,0.3);
+  color: var(--red);
+}
+
+/* ── CONFIRMATION ── */
+#booking-result { margin-top: 0; }
+
+.booking-confirm {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  padding: 40px;
+  text-align: center;
+}
+
+.confirm-icon { font-size: 48px; margin-bottom: 16px; }
+
+.booking-confirm h3 {
+  font-size: 20px;
+  color: var(--gold);
+  margin-bottom: 20px;
+}
+
+.booking-confirm p {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.booking-confirm p strong { color: var(--text); }
+
+.fare-note {
+  margin-top: 12px;
+  padding: 10px;
+  background: var(--gold-dim);
+  border-radius: 8px;
+  color: var(--gold) !important;
+  font-size: 13px !important;
+}
+
+/* ── HOW IT WORKS ── */
+.how-it-works {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.how-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 20px;
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: 14px;
+}
+
+.step-num {
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  background: var(--gold-dim);
+  border: 1px solid rgba(244,196,48,0.3);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Orbitron', monospace;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--gold);
+  flex-shrink: 0;
+}
+
+.step-content h4 {
+  font-size: 14px;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.step-content p {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 800px) {
+  .booking-layout { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav>
+  <a href="index.html" class="logo">SMART<span>PARK</span></a>
+  <button class="nav-toggle">☰</button>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="booking.html">Booking</a></li>
+    <li><a href="map.html">Live Map</a></li>
+    <li><a href="dashboard.html">Dashboard</a></li>
+    <li><a href="login.html">Login</a></li>
+  </ul>
+</nav>
+
+<div class="booking-page">
+  <div class="booking-layout">
+
+    <!-- LEFT: FORM -->
+    <div>
+      <div class="booking-card" id="booking-form-card">
+        <h2>Book Your Slot</h2>
+        <p class="sub">Select a slot below or let us auto-assign the nearest available one.</p>
+
+        <div class="select-wrap">
+          <i class="fas fa-parking"></i>
+          <select id="slot-select">
+            <option value="">Loading slots…</option>
+          </select>
+        </div>
+
+        <button class="btn btn-primary btn-full" id="book-btn">
+          <i class="fas fa-check-circle"></i> Confirm Booking
+        </button>
+
+        <div class="or-divider">or</div>
+
+        <button class="btn btn-outline btn-full" id="auto-btn">
+          <i class="fas fa-magic"></i> Auto-Assign Best Slot
+        </button>
+
+        <div class="booking-status" id="booking-status"></div>
+      </div>
+    </div>
+
+    <!-- RIGHT -->
+    <div>
+      <!-- Result shown here after booking -->
+      <div id="booking-result">
+        <div class="how-it-works">
+          <div class="how-step">
+            <div class="step-num">01</div>
+            <div class="step-content">
+              <h4>Choose or Auto-Assign</h4>
+              <p>Pick a specific slot from the dropdown or let SmartPark assign the nearest free one.</p>
+            </div>
+          </div>
+          <div class="how-step">
+            <div class="step-num">02</div>
+            <div class="step-content">
+              <h4>Booking Confirmed</h4>
+              <p>Your slot is reserved instantly. Firebase prevents any double-booking in real-time.</p>
+            </div>
+          </div>
+          <div class="how-step">
+            <div class="step-num">03</div>
+            <div class="step-content">
+              <h4>Park & Check Out</h4>
+              <p>When you leave, click Check Out. Your fare is calculated based on time parked at ₹50/hr.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <span class="footer-logo">SMARTPARK</span>
+  <span>© 2026 Smart Parking System</span>
+</footer>
+
+<script type="module">
+  import { requireAuth }                      from './js/auth.js';
+  import { loadAvailableSlots, bookSlot, restoreActiveBooking } from './js/booking.js';
+  import './js/ui.js';
+
+  requireAuth();
+
+  const slotSelect = document.getElementById('slot-select');
+  const statusEl   = document.getElementById('booking-status');
+
+  loadAvailableSlots(slotSelect, statusEl);
+  restoreActiveBooking();
+
+  document.getElementById('book-btn').addEventListener('click', () => {
+    const slotKey = slotSelect.value;
+    if (!slotKey) {
+      import('./js/ui.js').then(m => m.showToast('Please select a slot first.', 'error'));
+      return;
+    }
+    bookSlot(slotKey, document.getElementById('book-btn'));
+  });
+
+  document.getElementById('auto-btn').addEventListener('click', () => {
+    bookSlot(null, document.getElementById('auto-btn'));
+  });
+</script>
+</body>
+</html>
