@@ -7,170 +7,337 @@
 <link rel="stylesheet" href="css/style.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
+
 .map-page {
-  padding: 60px;
+  padding: 40px 48px;
   position: relative;
   z-index: 1;
-  min-height: calc(100vh - 70px);
+  min-height: calc(100vh - 68px);
+  animation: fadeIn 0.4s ease;
 }
 
 /* ── HEADER ── */
 .map-header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
-  margin-bottom: 40px;
+  margin-bottom: 32px;
   flex-wrap: wrap;
   gap: 16px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid rgba(0,229,255,0.08);
+  position: relative;
 }
 
-.map-header-left h1 { color: var(--gold); font-size: 26px; }
-.map-header-left p  { color: var(--text-muted); font-size: 13px; margin-top: 4px; }
+.map-header::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; left: 0;
+  width: 160px; height: 1px;
+  background: linear-gradient(90deg, var(--cyan), transparent);
+  opacity: 0.7;
+}
+
+.map-title h1 {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.map-title h1 span { color: var(--cyan); }
+
+.map-subtitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+/* ── STATUS BANNER ── */
+.parking-banner {
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 28px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  animation: fadeUp 0.3s ease;
+}
+
+.parking-banner.ok {
+  background: rgba(0,255,157,0.05);
+  border: 1px solid rgba(0,255,157,0.2);
+  color: var(--green);
+  box-shadow: 0 0 20px rgba(0,255,157,0.05), inset 0 0 20px rgba(0,255,157,0.02);
+}
+
+.parking-banner.warning {
+  background: rgba(244,196,48,0.05);
+  border: 1px solid rgba(244,196,48,0.25);
+  color: var(--gold);
+  box-shadow: 0 0 20px rgba(244,196,48,0.06), inset 0 0 20px rgba(244,196,48,0.02);
+}
+
+.parking-banner.full {
+  background: rgba(255,45,85,0.05);
+  border: 1px solid rgba(255,45,85,0.25);
+  color: var(--red);
+  box-shadow: 0 0 20px rgba(255,45,85,0.07), inset 0 0 20px rgba(255,45,85,0.02);
+  animation: alertPulse 2s ease-in-out infinite;
+}
+
+@keyframes alertPulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(255,45,85,0.07); }
+  50%       { box-shadow: 0 0 35px rgba(255,45,85,0.15); }
+}
 
 /* ── STATS ROW ── */
 .stats-row {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 16px;
-  margin-bottom: 36px;
+  margin-bottom: 32px;
 }
 
-.stat-card.gold   .stat-value { color: var(--gold); }
-.stat-card.green  .stat-value { color: var(--green); }
-.stat-card.red    .stat-value { color: var(--red); }
+.stats-row .stat-card { animation: fadeUp 0.4s ease both; }
+.stats-row .stat-card:nth-child(1) { animation-delay: 0.05s; }
+.stats-row .stat-card:nth-child(2) { animation-delay: 0.1s; }
+.stats-row .stat-card:nth-child(3) { animation-delay: 0.15s; }
 
-/* ── PARKING BANNER ── */
-.parking-banner {
-  padding: 14px 24px;
-  border-radius: 12px;
-  font-size: 14px;
-  font-weight: 600;
-  margin-bottom: 36px;
-  font-family: 'Orbitron', monospace;
-  letter-spacing: 0.5px;
+/* ── SLOT GRID ── */
+.slots-wrapper {
+  margin-bottom: 32px;
 }
 
-.parking-banner.ok      { background: var(--green-dim);   border: 1px solid rgba(0,255,136,0.3);  color: var(--green); }
-.parking-banner.warning { background: var(--gold-dim);    border: 1px solid rgba(244,196,48,0.3); color: var(--gold); }
-.parking-banner.full    { background: var(--red-dim);     border: 1px solid rgba(255,51,85,0.3);  color: var(--red); }
+.slots-section-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
 
-/* ── GRID ── */
+.slots-section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(0,229,255,0.15), transparent);
+}
+
 #map-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 20px;
+  gap: 16px;
 }
 
 /* ── SLOT CARD ── */
 .slot-card {
-  border-radius: 20px;
+  border-radius: 16px;
   padding: 28px 20px;
   text-align: center;
   cursor: default;
   transition: var(--transition);
-  animation: fadeUp 0.4s ease both;
+  animation: fadeUp 0.5s ease both;
+  position: relative;
+  overflow: hidden;
 }
 
-@keyframes fadeUp {
-  from { transform: translateY(20px); opacity: 0; }
-  to   { transform: translateY(0);    opacity: 1; }
+.slot-card::before {
+  content: '';
+  position: absolute;
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  background: radial-gradient(circle at center, currentColor 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
 }
+
+.slot-card:hover::before { opacity: 0.04; }
+
+/* Corner brackets */
+.slot-card::after {
+  content: '';
+  position: absolute;
+  top: 8px; left: 8px;
+  width: 16px; height: 16px;
+  border-top: 1px solid currentColor;
+  border-left: 1px solid currentColor;
+  opacity: 0.4;
+  transition: var(--transition);
+}
+
+.slot-card:hover::after { opacity: 0.8; top: 6px; left: 6px; }
 
 .slot-card.slot-available {
-  background: rgba(0,255,136,0.05);
-  border: 1px solid rgba(0,255,136,0.3);
-  box-shadow: 0 0 20px rgba(0,255,136,0.06);
+  background: rgba(0,255,157,0.04);
+  border: 1px solid rgba(0,255,157,0.2);
+  color: var(--green);
 }
 
 .slot-card.slot-available:hover {
-  box-shadow: 0 0 30px rgba(0,255,136,0.15);
-  transform: translateY(-4px);
+  background: rgba(0,255,157,0.07);
+  border-color: rgba(0,255,157,0.5);
+  box-shadow: 0 0 30px rgba(0,255,157,0.12), 0 20px 60px rgba(0,0,0,0.4);
+  transform: translateY(-6px) scale(1.01);
 }
 
 .slot-card.slot-occupied {
-  background: rgba(255,51,85,0.05);
-  border: 1px solid rgba(255,51,85,0.3);
-  box-shadow: 0 0 20px rgba(255,51,85,0.06);
+  background: rgba(255,45,85,0.04);
+  border: 1px solid rgba(255,45,85,0.2);
+  color: var(--red);
+}
+
+.slot-card.slot-occupied:hover {
+  border-color: rgba(255,45,85,0.4);
+  box-shadow: 0 0 20px rgba(255,45,85,0.08), 0 20px 50px rgba(0,0,0,0.4);
+  transform: translateY(-3px);
+}
+
+.slot-id-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
 }
 
 .slot-number {
-  font-family: 'Orbitron', monospace;
-  font-size: 28px;
-  font-weight: 900;
-  margin-bottom: 12px;
+  font-family: var(--font-mono);
+  font-size: 22px;
+  font-weight: 400;
+  letter-spacing: 2px;
 }
 
-.slot-available .slot-number { color: var(--green); }
-.slot-occupied  .slot-number { color: var(--red); }
+.slot-available .slot-number { color: var(--green); text-shadow: 0 0 15px rgba(0,255,157,0.5); }
+.slot-occupied  .slot-number { color: var(--red);   text-shadow: 0 0 15px rgba(255,45,85,0.4); }
 
-.slot-icon { font-size: 40px; margin-bottom: 10px; }
+.slot-indicator {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.slot-available .slot-indicator {
+  background: var(--green);
+  box-shadow: 0 0 8px var(--green), 0 0 16px rgba(0,255,157,0.3);
+  animation: pulseDot 2s infinite;
+}
+.slot-occupied  .slot-indicator {
+  background: var(--red);
+  box-shadow: 0 0 8px var(--red);
+}
+
+.slot-icon {
+  font-size: 42px;
+  margin-bottom: 12px;
+  display: block;
+  filter: drop-shadow(0 0 10px currentColor);
+}
 
 .slot-label {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 1.5px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 2.5px;
   text-transform: uppercase;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
+  opacity: 0.9;
 }
-
-.slot-available .slot-label { color: var(--green); }
-.slot-occupied  .slot-label { color: var(--red); }
 
 .slot-book-btn {
   display: inline-block;
-  padding: 8px 20px;
-  background: var(--green-dim);
-  border: 1px solid rgba(0,255,136,0.4);
-  border-radius: 20px;
+  padding: 7px 20px;
+  background: rgba(0,255,157,0.08);
+  border: 1px solid rgba(0,255,157,0.35);
+  border-radius: 4px;
   color: var(--green);
-  font-size: 11px;
-  font-weight: 600;
-  font-family: 'Orbitron', monospace;
-  letter-spacing: 0.5px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 2px;
   text-decoration: none;
+  text-transform: uppercase;
   transition: var(--transition);
 }
 
 .slot-book-btn:hover {
   background: var(--green);
   color: #000;
+  box-shadow: 0 0 20px rgba(0,255,157,0.4);
+  transform: translateY(-1px);
+}
+
+.slot-unavailable-label {
+  display: inline-block;
+  padding: 6px 16px;
+  background: rgba(255,45,85,0.06);
+  border: 1px solid rgba(255,45,85,0.2);
+  border-radius: 4px;
+  color: var(--red);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  opacity: 0.8;
 }
 
 /* ── LEGEND ── */
 .legend {
   display: flex;
   gap: 24px;
-  margin-top: 36px;
   flex-wrap: wrap;
+  padding: 16px 20px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--glass-border);
+  border-radius: 10px;
+  width: fit-content;
 }
 
 .legend-item {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 13px;
+  font-family: var(--font-mono);
+  font-size: 10px;
   color: var(--text-muted);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
 }
 
 .legend-dot {
-  width: 10px; height: 10px;
+  width: 8px; height: 8px;
   border-radius: 50%;
 }
-
-.legend-dot.green { background: var(--green); }
-.legend-dot.red   { background: var(--red); }
+.legend-dot.green { background: var(--green); box-shadow: 0 0 6px var(--green); }
+.legend-dot.red   { background: var(--red);   box-shadow: 0 0 6px var(--red); }
 
 /* ── RESPONSIVE ── */
-@media (max-width: 700px) {
-  .map-page { padding: 30px 16px; }
-  .stats-row { grid-template-columns: 1fr; }
+@media (max-width: 900px) {
+  .map-page   { padding: 24px 16px; }
+  .stats-row  { grid-template-columns: repeat(3, 1fr); }
   .map-header { flex-direction: column; align-items: flex-start; }
+}
+@media (max-width: 600px) {
+  .stats-row  { grid-template-columns: 1fr; }
+  #map-grid   { grid-template-columns: 1fr 1fr; }
 }
 </style>
 </head>
 <body>
 
-<!-- NAVBAR -->
 <nav>
   <a href="index.html" class="logo">SMART<span>PARK</span></a>
   <button class="nav-toggle">☰</button>
@@ -178,7 +345,7 @@
     <li><a href="index.html">Home</a></li>
     <li><a href="about.html">About</a></li>
     <li><a href="booking.html">Booking</a></li>
-    <li><a href="map.html">Live Map</a></li>
+    <li><a href="map.html" class="active">Live Map</a></li>
     <li><a href="dashboard.html">Dashboard</a></li>
     <li><a href="login.html">Login</a></li>
   </ul>
@@ -188,12 +355,12 @@
 
   <!-- HEADER -->
   <div class="map-header">
-    <div class="map-header-left">
-      <h1>Live Parking Map</h1>
-      <p>
-        <span class="pulse-dot" style="margin-right:6px"></span>
-        Real-time updates · Ambience Mall Parking
-      </p>
+    <div class="map-title">
+      <h1>LIVE <span>PARKING</span> MAP</h1>
+      <div class="map-subtitle">
+        <span class="pulse-dot"></span>
+        <span>Real-time · Ambience Mall · IoT Feed</span>
+      </div>
     </div>
     <a href="booking.html" class="btn btn-primary">
       <i class="fas fa-parking"></i> Book a Slot
@@ -201,14 +368,17 @@
   </div>
 
   <!-- STATUS BANNER -->
-  <div class="parking-banner ok" id="parking-status">Connecting to live data…</div>
+  <div class="parking-banner ok" id="parking-status">
+    <span class="spinner" style="width:14px;height:14px;border-width:2px"></span>
+    Initializing sensor network…
+  </div>
 
   <!-- STATS -->
   <div class="stats-row">
     <div class="stat-card gold">
       <div class="stat-icon">🅿️</div>
       <div class="stat-value" id="stat-total">—</div>
-      <div class="stat-label">Total Slots</div>
+      <div class="stat-label">Total Nodes</div>
     </div>
     <div class="stat-card green">
       <div class="stat-icon">✅</div>
@@ -222,10 +392,13 @@
     </div>
   </div>
 
-  <!-- SLOT GRID -->
-  <div id="map-grid">
-    <div style="color:var(--text-muted);font-size:14px;padding:20px">
-      <span class="spinner"></span> Loading live data…
+  <!-- SLOTS -->
+  <div class="slots-wrapper">
+    <div class="slots-section-label">Parking Nodes · Live Status</div>
+    <div id="map-grid">
+      <div style="color:var(--text-muted);font-family:var(--font-mono);font-size:12px;padding:30px;letter-spacing:1px;text-transform:uppercase">
+        <span class="spinner"></span>&nbsp; Connecting to sensors…
+      </div>
     </div>
   </div>
 
@@ -239,7 +412,7 @@
 
 <footer>
   <span class="footer-logo">SMARTPARK</span>
-  <span>© 2026 Smart Parking System</span>
+  <span>© 2026 SMART PARKING SYSTEM — MAP:ONLINE</span>
 </footer>
 
 <script type="module">
