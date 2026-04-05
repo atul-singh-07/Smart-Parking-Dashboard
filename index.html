@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Smart Parking</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+
+/* ====== YOUR PROVIDED STYLE ====== */
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins', sans-serif;
+}
+
+body{
+    background:#0d0d0d;
+    color:white;
+}
+
+nav{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:20px 80px;
+}
+
+.logo{
+    font-size:24px;
+    font-weight:700;
+    color:#f4c430;
+}
+
+.nav-links{
+    list-style:none;
+    display:flex;
+    gap:35px;
+}
+
+.nav-links li a{
+    text-decoration:none;
+    color:white;
+    font-weight:500;
+    transition:0.3s;
+}
+
+.nav-links li a:hover{
+    color:#f4c430;
+}
+
+.hero{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:60px 80px;
+    min-height:85vh;
+}
+
+.left{
+    max-width:500px;
+}
+
+.left h1{
+    font-size:48px;
+}
+
+.left span{
+    color:#f4c430;
+}
+
+.left p{
+    margin-top:20px;
+    color:#ccc;
+}
+
+.btn{
+    background:#f4c430;
+    padding:15px 35px;
+    border:none;
+    border-radius:8px;
+    font-weight:600;
+    cursor:pointer;
+    margin-top:25px;
+}
+
+.btn:hover{
+    background:white;
+}
+
+.car-box{
+    width:350px;
+    height:350px;
+    background:#f4c430;
+    border-radius:30px;
+    transform:rotate(-10deg);
+    box-shadow:0 0 40px rgba(244,196,48,0.4);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.car-box::after{
+    content:"🚗";
+    font-size:120px;
+    transform:rotate(10deg);
+}
+
+footer{
+    text-align:center;
+    padding:20px;
+    color:#aaa;
+}
+
+</style>
+</head>
+
+<body>
+
+<nav>
+<div class="logo">Smart Parking</div>
+<ul class="nav-links">
+<li><a href="index.html">Home</a></li>
+<li><a href="about.html">About</a></li>
+<li><a href="booking.html">Booking</a></li>
+<li><a href="map.html">Map</a></li>
+<li><a href="login.html">Login</a></li>
+<li><a href="system.html">System Architecture</a></li>
+</ul>
+</nav>
+
+<section class="hero">
+<div class="left">
+<h1>Next Gen <span>Smart Parking</span> System</h1>
+<p>Real-time slot detection using ESP32 + Ultrasonic Sensors + Firebase.</p>
+<a href="booking.html"><button class="btn">Book Slot</button></a>
+</div>
+
+<div class="car-box"></div>
+</section>
+
+
+
+<footer>
+© 2026 Smart Parking System | Prototype Version
+</footer>
+
+</body>
+</html>
+
+
+
