@@ -1,151 +1,3618 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Smart Parking</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SmartPark | Next-Gen Parking & EV Charging</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 <style>
 
-/* ====== YOUR PROVIDED STYLE ====== */
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:'Poppins', sans-serif;
+/* ============================================================
+   SECTION: GLOBAL STYLES & CSS VARIABLES
+   ============================================================ */
+:root {
+  --gold:        #f4c430;
+  --gold-dim:    #c9a227;
+  --gold-glow:   rgba(244, 196, 48, 0.35);
+  --gold-glow2:  rgba(244, 196, 48, 0.15);
+  --green:       #00ff88;
+  --green-glow:  rgba(0, 255, 136, 0.35);
+  --red:         #ff3355;
+  --red-glow:    rgba(255, 51, 85, 0.35);
+  --yellow:      #ffcc00;
+  --yellow-glow: rgba(255, 204, 0, 0.35);
+  --blue:        #00c8ff;
+  --blue-glow:   rgba(0, 200, 255, 0.35);
+  --bg:          #080810;
+  --bg2:         #0e0e1a;
+  --bg3:         #141420;
+  --card:        rgba(20, 20, 35, 0.85);
+  --border:      rgba(244, 196, 48, 0.18);
+  --text:        #e8e8f0;
+  --muted:       #8888aa;
+  --glass:       rgba(255,255,255,0.04);
+  --glass2:      rgba(255,255,255,0.07);
+  --radius:      18px;
+  --transition:  0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-body{
-    background:#0d0d0d;
-    color:white;
+*, *::before, *::after {
+  margin: 0; padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
 }
 
-nav{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:20px 80px;
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
 }
 
-.logo{
-    font-size:24px;
-    font-weight:700;
-    color:#f4c430;
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 3px; }
+
+/* ============================================================
+   SECTION: PAGE SYSTEM
+   ============================================================ */
+.page { display: none; min-height: 100vh; animation: fadeIn 0.4s ease; }
+.page.active { display: block; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-.nav-links{
-    list-style:none;
-    display:flex;
-    gap:35px;
+/* ============================================================
+   SECTION: NAVBAR (shared — single definition)
+   ============================================================ */
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 60px;
+  background: rgba(8, 8, 16, 0.92);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 900;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
 }
 
-.nav-links li a{
-    text-decoration:none;
-    color:white;
-    font-weight:500;
-    transition:0.3s;
+.logo {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--gold);
+  cursor: pointer;
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-.nav-links li a:hover{
-    color:#f4c430;
+.logo::before {
+  content: "⚡";
+  font-size: 20px;
 }
 
-.hero{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:60px 80px;
-    min-height:85vh;
+.user-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--gold);
+  font-weight: 500;
+  background: var(--gold-glow2);
+  padding: 6px 14px;
+  border-radius: 30px;
+  border: 1px solid var(--border);
 }
 
-.left{
-    max-width:500px;
+.nav-links { list-style: none; display: flex; gap: 28px; align-items: center; }
+
+.nav-links li a {
+  text-decoration: none;
+  color: var(--muted);
+  font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
+  position: relative;
+  transition: var(--transition);
+  letter-spacing: 0.3px;
 }
 
-.left h1{
-    font-size:48px;
+.nav-links li a:hover,
+.nav-links li a.active { color: var(--gold); }
+
+.nav-links li a::after {
+  content: "";
+  position: absolute;
+  left: 0; bottom: -5px;
+  width: 0%; height: 2px;
+  background: var(--gold);
+  transition: var(--transition);
+  border-radius: 2px;
 }
 
-.left span{
-    color:#f4c430;
+.nav-links li a:hover::after,
+.nav-links li a.active::after { width: 100%; }
+
+.menu-toggle {
+  display: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: var(--text);
+  transition: var(--transition);
 }
 
-.left p{
-    margin-top:20px;
-    color:#ccc;
+.menu-toggle:hover { color: var(--gold); }
+
+@media(max-width: 960px) {
+  nav { padding: 18px 20px; }
+
+  .nav-links {
+    position: absolute;
+    top: 70px; right: 0;
+    background: rgba(12, 12, 22, 0.98);
+    width: 240px;
+    flex-direction: column;
+    padding: 20px 0;
+    display: none;
+    border-radius: 0 0 12px 12px;
+    border: 1px solid var(--border);
+    backdrop-filter: blur(20px);
+    z-index: 999;
+  }
+
+  .nav-links.open { display: flex; }
+  .menu-toggle { display: block; }
+  .user-badge { display: none; }
 }
 
-.btn{
-    background:#f4c430;
-    padding:15px 35px;
-    border:none;
-    border-radius:8px;
-    font-weight:600;
-    cursor:pointer;
-    margin-top:25px;
+/* ============================================================
+   SECTION: FOOTER (shared)
+   ============================================================ */
+footer {
+  text-align: center;
+  padding: 24px;
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 13px;
+  letter-spacing: 0.5px;
 }
 
-.btn:hover{
-    background:white;
+/* ============================================================
+   SECTION: SHARED COMPONENTS (Buttons, Cards, Toast)
+   ============================================================ */
+.btn-primary {
+  background: linear-gradient(135deg, var(--gold), var(--gold-dim));
+  padding: 14px 36px;
+  border: none;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  color: #000;
+  transition: var(--transition);
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 20px var(--gold-glow);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 
-.car-box{
-    width:350px;
-    height:350px;
-    background:#f4c430;
-    border-radius:30px;
-    transform:rotate(-10deg);
-    box-shadow:0 0 40px rgba(244,196,48,0.4);
-    display:flex;
-    align-items:center;
-    justify-content:center;
+.btn-primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 30px var(--gold-glow);
 }
 
-.car-box::after{
-    content:"🚗";
-    font-size:120px;
-    transform:rotate(10deg);
+.btn-outline {
+  background: transparent;
+  padding: 12px 30px;
+  border: 2px solid var(--gold);
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  color: var(--gold);
+  transition: var(--transition);
+  letter-spacing: 0.5px;
 }
 
-footer{
-    text-align:center;
-    padding:20px;
-    color:#aaa;
+.btn-outline:hover {
+  background: var(--gold);
+  color: #000;
+  box-shadow: 0 4px 20px var(--gold-glow);
+}
+
+/* Toast Notification */
+#toast-container {
+  position: fixed;
+  top: 90px; right: 24px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.toast {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 20px;
+  min-width: 260px;
+  max-width: 340px;
+  backdrop-filter: blur(20px);
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  animation: toastIn 0.4s ease;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  border-left: 3px solid var(--gold);
+}
+
+.toast.success { border-left-color: var(--green); }
+.toast.error   { border-left-color: var(--red); }
+.toast.info    { border-left-color: var(--blue); }
+
+.toast-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+.toast-body { flex: 1; }
+.toast-title { font-weight: 700; font-size: 14px; margin-bottom: 2px; }
+.toast-msg   { font-size: 13px; color: var(--muted); line-height: 1.4; }
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateX(50px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes toastOut {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: 0; transform: translateX(50px); }
+}
+
+/* Section Titles */
+.section-title {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.section-title h2 {
+  font-size: 36px;
+  font-weight: 800;
+  color: var(--gold);
+  letter-spacing: 0.5px;
+}
+
+.section-title p {
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 15px;
+}
+
+.section-title .title-line {
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--gold), transparent);
+  margin: 12px auto 0;
+  border-radius: 2px;
+}
+
+/* ============================================================
+   SECTION: PAGE — HOME  (FUTURISTIC SYSTEM CONTROL HUB)
+   ============================================================ */
+
+/* ── Animated Grid Background ── */
+#page-home {
+  background: var(--bg);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Grid canvas background */
+#page-home .grid-bg {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+#page-home .grid-bg::before {
+  content: '';
+  position: absolute;
+  inset: -50%;
+  width: 200%; height: 200%;
+  background-image:
+    linear-gradient(rgba(244,196,48,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(244,196,48,0.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+  animation: gridDrift 30s linear infinite;
+}
+
+#page-home .grid-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 70% 40%, rgba(0,200,255,0.05) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 20% 80%, rgba(244,196,48,0.04) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 50% 10%, rgba(0,255,136,0.03) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+@keyframes gridDrift {
+  0%   { transform: translate(0, 0); }
+  100% { transform: translate(60px, 60px); }
+}
+
+/* ── System Status Strip ── */
+.sys-status-strip {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  padding: 10px 40px;
+  background: rgba(0,255,136,0.03);
+  border-bottom: 1px solid rgba(0,255,136,0.12);
+  backdrop-filter: blur(20px);
+}
+
+.sys-status-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  color: var(--green);
+}
+
+.sys-status-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  animation: sysBlinkDot 1.6s ease-in-out infinite;
+  box-shadow: 0 0 6px var(--green);
+  flex-shrink: 0;
+}
+
+.sys-status-item:nth-child(2) .sys-status-dot { animation-delay: 0.4s; }
+.sys-status-item:nth-child(3) .sys-status-dot { animation-delay: 0.8s; }
+
+@keyframes sysBlinkDot {
+  0%, 100% { opacity: 1; box-shadow: 0 0 6px rgba(0,255,136,0.8); }
+  50%       { opacity: 0.3; box-shadow: 0 0 2px rgba(0,255,136,0.3); }
+}
+
+#page-home nav {
+  background: rgba(8,8,16,0.88);
+  border-bottom: 1px solid rgba(244,196,48,0.12);
+  position: sticky;
+  width: 100%;
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  z-index: 900;
+}
+
+/* ── Hero layout ── */
+.hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 80px 80px 70px;
+  min-height: calc(100vh - 100px);
+  position: relative;
+  gap: 60px;
+  z-index: 1;
+}
+
+.hero-left { max-width: 540px; }
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0,255,136,0.06);
+  border: 1px solid rgba(0,255,136,0.2);
+  color: var(--green);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 7px 16px;
+  border-radius: 4px;
+  margin-bottom: 28px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.hero-badge .dot {
+  width: 6px; height: 6px;
+  background: var(--green);
+  border-radius: 50%;
+  animation: pulse-dot 2s ease-in-out infinite;
+  box-shadow: 0 0 6px var(--green);
+}
+
+@keyframes pulse-dot {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(0,255,136,0.6); }
+  50%       { box-shadow: 0 0 0 5px rgba(0,255,136,0); }
+}
+
+.hero-left h1 {
+  font-size: 52px;
+  font-weight: 900;
+  line-height: 1.08;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.hero-left h1 .gold {
+  color: var(--gold);
+  text-shadow: 0 0 30px rgba(244,196,48,0.3);
+}
+.hero-left h1 .blue {
+  color: var(--blue);
+  text-shadow: 0 0 30px rgba(0,200,255,0.3);
+}
+
+.hero-left p {
+  margin-top: 20px;
+  color: var(--muted);
+  line-height: 1.8;
+  font-size: 13px;
+  max-width: 420px;
+  font-weight: 400;
+  letter-spacing: 0.3px;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 14px;
+  margin-top: 36px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/* Futuristic button overrides for hero */
+.hero-actions .btn-primary {
+  background: linear-gradient(135deg, var(--gold), var(--gold-dim));
+  border-radius: 4px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  font-size: 12px;
+  font-weight: 800;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 0 20px rgba(244,196,48,0.25), 0 4px 20px rgba(0,0,0,0.4);
+}
+
+.hero-actions .btn-primary::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.15) 50%, transparent 100%);
+  transform: translateX(-100%);
+  transition: transform 0.5s ease;
+}
+
+.hero-actions .btn-primary:hover::after { transform: translateX(100%); }
+.hero-actions .btn-primary:hover {
+  box-shadow: 0 0 40px rgba(244,196,48,0.45), 0 8px 30px rgba(0,0,0,0.5);
+  transform: translateY(-2px);
+}
+
+.hero-actions .btn-outline {
+  border-radius: 4px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  font-size: 12px;
+  font-weight: 700;
+  border: 1px solid rgba(0,200,255,0.4);
+  color: var(--blue);
+  position: relative;
+}
+
+.hero-actions .btn-outline:hover {
+  background: rgba(0,200,255,0.08);
+  border-color: var(--blue);
+  box-shadow: 0 0 20px rgba(0,200,255,0.2), inset 0 0 20px rgba(0,200,255,0.05);
+  color: var(--blue);
+  transform: translateY(-2px);
+}
+
+/* Trust strip */
+.hero-trust {
+  margin-top: 24px;
+  font-size: 10px;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.hero-trust span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.hero-trust i {
+  color: var(--green);
+  font-size: 10px;
+}
+
+.hero-stats {
+  display: flex;
+  gap: 0;
+  margin-top: 48px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(244,196,48,0.1);
+}
+
+.hero-stat {
+  flex: 1;
+  padding-right: 24px;
+  margin-right: 24px;
+  border-right: 1px solid rgba(255,255,255,0.06);
+}
+.hero-stat:last-child { border-right: none; margin-right: 0; padding-right: 0; }
+
+.hero-stat .num {
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--gold);
+  letter-spacing: -0.5px;
+  text-shadow: 0 0 20px rgba(244,196,48,0.25);
+}
+
+.hero-stat .lbl {
+  font-size: 9px;
+  color: var(--muted);
+  margin-top: 4px;
+  text-transform: uppercase;
+  letter-spacing: 1.8px;
+}
+
+/* ── Hero visual — Holographic Dashboard Panel ── */
+.hero-visual {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.hero-orbit { display: none; }
+
+/* Outer glow halo */
+.hero-visual::before {
+  content: '';
+  position: absolute;
+  inset: -30px;
+  background: radial-gradient(ellipse at center, rgba(0,200,255,0.06) 0%, transparent 70%);
+  pointer-events: none;
+  border-radius: 50%;
+}
+
+.hero-card {
+  width: 420px;
+  background: linear-gradient(160deg, rgba(10,12,28,0.95), rgba(6,14,32,0.95));
+  border-radius: 16px;
+  border: 1px solid rgba(0,200,255,0.2);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.03),
+    0 30px 80px rgba(0,0,0,0.7),
+    0 0 60px rgba(0,200,255,0.06),
+    inset 0 1px 0 rgba(255,255,255,0.06);
+  padding: 0;
+  overflow: hidden;
+  position: relative;
+  animation: floatCard 8s ease-in-out infinite;
+  backdrop-filter: blur(20px);
+}
+
+/* Scanning line effect */
+.hero-card::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(0,200,255,0.6), rgba(244,196,48,0.3), transparent);
+  animation: scanLine 4s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 10;
+  top: 0;
+}
+
+@keyframes scanLine {
+  0%   { top: 0%; opacity: 0; }
+  5%   { opacity: 1; }
+  95%  { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+
+/* Remove old ::before spinning */
+.hero-card::before { display: none; }
+
+@keyframes floatCard {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-12px); }
+}
+
+/* Dashboard header bar */
+.hc-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px 12px;
+  border-bottom: 1px solid rgba(0,200,255,0.1);
+  background: rgba(0,200,255,0.03);
+  position: relative;
+}
+
+.hc-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0,200,255,0.3), transparent);
+}
+
+.hc-header-title {
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hc-header-title i {
+  color: var(--gold);
+  font-size: 11px;
+}
+
+.hc-live-dot {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 9px;
+  color: var(--green);
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.hc-live-dot::before {
+  content: '';
+  width: 6px; height: 6px;
+  background: var(--green);
+  border-radius: 50%;
+  animation: sysBlinkDot 1.4s ease-in-out infinite;
+  box-shadow: 0 0 6px var(--green);
+}
+
+/* Location label */
+.hc-location {
+  padding: 10px 18px 0;
+  font-size: 9px;
+  color: var(--muted);
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+/* Slot grid — futuristic squares */
+.hc-slot-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  padding: 12px 18px 16px;
+}
+
+.hc-slot {
+  border-radius: 6px;
+  padding: 14px 8px;
+  text-align: center;
+  position: relative;
+  border: 1px solid transparent;
+  transition: var(--transition);
+  overflow: hidden;
+}
+
+.hc-slot::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  border-radius: 6px 6px 0 0;
+}
+
+.hc-slot.available {
+  background: rgba(0,255,136,0.06);
+  border-color: rgba(0,255,136,0.18);
+  box-shadow: 0 0 12px rgba(0,255,136,0.05);
+}
+.hc-slot.available::before { background: rgba(0,255,136,0.6); }
+
+.hc-slot.occupied {
+  background: rgba(255,51,85,0.06);
+  border-color: rgba(255,51,85,0.18);
+  box-shadow: 0 0 12px rgba(255,51,85,0.05);
+}
+.hc-slot.occupied::before { background: rgba(255,51,85,0.6); }
+
+.hc-slot.ev {
+  background: rgba(0,200,255,0.06);
+  border-color: rgba(0,200,255,0.18);
+  box-shadow: 0 0 12px rgba(0,200,255,0.05);
+}
+.hc-slot.ev::before { background: rgba(0,200,255,0.6); }
+
+.hc-slot:hover { transform: translateY(-2px); filter: brightness(1.2); }
+
+.hc-slot-icon {
+  font-size: 13px;
+  margin-bottom: 6px;
+  line-height: 1;
+}
+
+.hc-slot-icon i { font-size: 13px; }
+
+.hc-slot.available .hc-slot-icon i { color: var(--green); filter: drop-shadow(0 0 4px rgba(0,255,136,0.5)); }
+.hc-slot.occupied  .hc-slot-icon i { color: var(--red);   filter: drop-shadow(0 0 4px rgba(255,51,85,0.5)); }
+.hc-slot.ev        .hc-slot-icon i { color: var(--blue);  filter: drop-shadow(0 0 4px rgba(0,200,255,0.5)); }
+
+.hc-slot-label {
+  font-size: 8px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+}
+
+.hc-slot.available .hc-slot-label { color: var(--green); }
+.hc-slot.occupied  .hc-slot-label { color: var(--red); }
+.hc-slot.ev        .hc-slot-label { color: var(--blue); }
+
+.hc-slot-num {
+  font-size: 9px;
+  color: rgba(136,136,170,0.6);
+  margin-top: 3px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+/* Dashboard footer row */
+.hc-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px 14px;
+  border-top: 1px solid rgba(255,255,255,0.05);
+  background: rgba(0,0,0,0.2);
+  position: relative;
+}
+
+.hc-footer::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(244,196,48,0.15), transparent);
+}
+
+.hc-stat { text-align: center; }
+
+.hc-stat-val {
+  font-size: 20px;
+  font-weight: 900;
+  color: var(--gold);
+  letter-spacing: -0.5px;
+  text-shadow: 0 0 16px rgba(244,196,48,0.3);
+}
+
+.hc-stat-lbl {
+  font-size: 8px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-top: 2px;
+}
+
+.hc-divider {
+  width: 1px;
+  height: 28px;
+  background: rgba(255,255,255,0.06);
+}
+
+/* Panel corner decorations */
+.hc-corner {
+  position: absolute;
+  width: 12px; height: 12px;
+  border-color: rgba(0,200,255,0.4);
+  border-style: solid;
+}
+.hc-corner.tl { top: 6px; left: 6px; border-width: 1px 0 0 1px; }
+.hc-corner.tr { top: 6px; right: 6px; border-width: 1px 1px 0 0; }
+.hc-corner.bl { bottom: 6px; left: 6px; border-width: 0 0 1px 1px; }
+.hc-corner.br { bottom: 6px; right: 6px; border-width: 0 1px 1px 0; }
+
+/* hero-card-inner — hidden (JS safety) */
+.hero-card-inner { display: none; }
+
+/* ── Features strip ── */
+.features-strip {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  padding: 0 80px 80px;
+  position: relative;
+  z-index: 1;
+}
+
+.feat-card {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(244,196,48,0.1);
+  border-radius: 8px;
+  padding: 28px 24px;
+  transition: var(--transition);
+  backdrop-filter: blur(16px);
+  position: relative;
+  overflow: hidden;
+}
+
+.feat-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  opacity: 0;
+  transition: var(--transition);
+}
+
+.feat-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 0; height: 1px;
+  background: var(--blue);
+  transition: width 0.5s ease;
+}
+
+.feat-card:hover {
+  border-color: rgba(244,196,48,0.25);
+  transform: translateY(-6px);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.5), 0 0 30px rgba(244,196,48,0.05), inset 0 0 20px rgba(244,196,48,0.02);
+}
+
+.feat-card:hover::before { opacity: 1; }
+.feat-card:hover::after { width: 100%; }
+
+.feat-icon {
+  width: 40px; height: 40px;
+  border-radius: 6px;
+  background: rgba(244,196,48,0.06);
+  border: 1px solid rgba(244,196,48,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 18px;
+  transition: var(--transition);
+}
+
+.feat-card:hover .feat-icon {
+  box-shadow: 0 0 20px rgba(244,196,48,0.2);
+  border-color: rgba(244,196,48,0.4);
+}
+
+.feat-icon i {
+  font-size: 16px;
+  color: var(--gold);
+}
+
+.feat-card h3 {
+  font-size: 12px;
+  font-weight: 800;
+  margin-bottom: 10px;
+  color: var(--text);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+.feat-card p {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.75;
+  letter-spacing: 0.2px;
+}
+
+@media(max-width: 900px) {
+  .hero { padding: 70px 24px 60px; flex-direction: column; gap: 48px; text-align: center; }
+  .hero-left h1 { font-size: 36px; }
+  .hero-left p { max-width: 100%; }
+  .hero-actions { justify-content: center; }
+  .hero-trust { justify-content: center; }
+  .hero-stats { justify-content: center; gap: 0; }
+  .hero-card { width: 100%; max-width: 360px; }
+  .features-strip { grid-template-columns: 1fr; padding: 0 24px 60px; }
+  .sys-status-strip { gap: 16px; flex-wrap: wrap; justify-content: center; }
+}
+
+/* ============================================================
+   SECTION: PAGE — ABOUT (TEAM)
+   ============================================================ */
+#page-team { background: var(--bg); }
+
+.team-hero {
+  text-align: center;
+  padding: 60px 20px 40px;
+  background: linear-gradient(180deg, var(--bg2) 0%, var(--bg) 100%);
+  border-bottom: 1px solid var(--border);
+}
+
+.team-hero h1 { font-size: 42px; font-weight: 800; color: var(--gold); margin-bottom: 16px; }
+.team-hero p   { max-width: 700px; margin: auto; color: var(--muted); line-height: 1.8; }
+
+.team { padding: 60px 80px; }
+
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 28px;
+}
+
+.member-card {
+  background: var(--card);
+  padding: 32px 24px;
+  border-radius: var(--radius);
+  text-align: center;
+  border: 1px solid var(--border);
+  transition: var(--transition);
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+}
+
+.member-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, var(--gold), var(--blue));
+  transform: scaleX(0);
+  transition: var(--transition);
+}
+
+.member-card:hover { border-color: var(--gold); transform: translateY(-8px); box-shadow: 0 20px 40px var(--gold-glow2); }
+.member-card:hover::after { transform: scaleX(1); }
+
+.member-avatar {
+  width: 90px; height: 90px;
+  border-radius: 50%;
+  margin: 0 auto 18px;
+  border: 3px solid var(--gold);
+  background: linear-gradient(135deg, #1a1a2e, #0f3460);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  overflow: hidden;
+}
+
+.member-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+.member-card h3    { color: var(--gold); font-size: 17px; font-weight: 700; margin-bottom: 6px; }
+.member-card .role { color: var(--muted); font-size: 13px; margin-bottom: 10px; }
+.member-card .skills { font-size: 12px; color: var(--text); margin-bottom: 16px; opacity: 0.7; }
+
+.social { display: flex; justify-content: center; gap: 12px; }
+.social i { cursor: pointer; transition: var(--transition); color: var(--muted); font-size: 16px; }
+.social i:hover { color: var(--gold); transform: scale(1.2); }
+
+@media(max-width: 600px) { .team { padding: 40px 20px; } }
+
+/* ============================================================
+   SECTION: PAGE — BOOKING
+   ============================================================ */
+#page-booking { background: var(--bg); }
+
+.booking-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 30px;
+  padding: 50px 40px 80px;
+  flex-wrap: wrap;
+}
+
+.booking-card {
+  background: var(--card);
+  padding: 42px;
+  border-radius: var(--radius);
+  box-shadow: 0 0 60px var(--gold-glow2);
+  text-align: center;
+  width: 420px;
+  border: 1px solid var(--border);
+  backdrop-filter: blur(20px);
+  transition: var(--transition);
+  flex-shrink: 0;
+}
+
+.booking-card:hover { border-color: var(--gold); box-shadow: 0 0 40px var(--gold-glow); }
+.booking-card h1    { color: var(--gold); margin-bottom: 8px; font-size: 26px; font-weight: 800; }
+.booking-card .sub  { color: var(--muted); font-size: 13px; margin-bottom: 28px; }
+
+.form-field {
+  margin-bottom: 18px;
+  text-align: left;
+}
+
+.form-field label {
+  font-size: 12px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+  display: block;
+}
+
+select, .form-input {
+  width: 100%;
+  padding: 13px 16px;
+  background: rgba(255,255,255,0.04);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  outline: none;
+  transition: var(--transition);
+  font-size: 14px;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+select:focus, .form-input:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px var(--gold-glow2);
+}
+
+.select-wrapper { position: relative; }
+.select-wrapper::after {
+  content: "▼";
+  position: absolute;
+  right: 14px; top: 50%;
+  transform: translateY(-50%);
+  color: var(--gold);
+  font-size: 11px;
+  pointer-events: none;
+}
+
+.booking-btn {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, var(--gold), var(--gold-dim));
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition);
+  font-size: 15px;
+  color: #000;
+  margin-top: 6px;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 20px var(--gold-glow);
+}
+
+.booking-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 30px var(--gold-glow);
+}
+
+#msg {
+  margin-top: 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--green);
+}
+
+/* Booking timer widget */
+.booking-timer {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  width: 280px;
+  flex-shrink: 0;
+  backdrop-filter: blur(20px);
+  display: none;
+}
+
+.booking-timer.visible { display: block; }
+.booking-timer h3 { color: var(--gold); font-size: 15px; font-weight: 700; margin-bottom: 16px; text-align: center; }
+
+.timer-circle {
+  width: 120px; height: 120px;
+  border-radius: 50%;
+  border: 4px solid var(--border);
+  margin: 0 auto 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+.timer-circle::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  border-radius: 50%;
+  border: 4px solid var(--gold);
+  clip-path: inset(0);
+  animation: timer-sweep 300s linear forwards;
+}
+
+@keyframes timer-sweep {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.timer-num  { font-size: 28px; font-weight: 800; color: var(--gold); }
+.timer-lbl  { font-size: 11px; color: var(--muted); }
+.timer-slot { text-align: center; font-size: 13px; color: var(--text); }
+.timer-cancel { display: block; width: 100%; margin-top: 14px; padding: 10px; background: rgba(255,51,85,0.12); border: 1px solid rgba(255,51,85,0.3); color: var(--red); border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600; transition: var(--transition); text-align: center; }
+.timer-cancel:hover { background: var(--red); color: #fff; }
+
+@media(max-width: 500px) { .booking-card { width: 100%; padding: 28px; } }
+
+/* ============================================================
+   SECTION: MAP SYSTEM (Advanced)
+   ============================================================ */
+#page-map { background: var(--bg); }
+
+.map-hero {
+  padding: 40px 60px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.map-hero-title h1 { font-size: 30px; font-weight: 800; color: var(--gold); }
+.map-hero-title p  { font-size: 14px; color: var(--muted); margin-top: 4px; }
+
+.live-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0,255,136,0.08);
+  border: 1px solid rgba(0,255,136,0.25);
+  color: var(--green);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 10px 18px;
+  border-radius: 50px;
+}
+
+/* Search bar */
+.map-search-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 60px 28px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 20px;
+  backdrop-filter: blur(20px);
+  transition: var(--transition);
+}
+
+.map-search-bar:focus-within { border-color: var(--gold); box-shadow: 0 0 0 3px var(--gold-glow2); }
+.map-search-bar i  { color: var(--muted); font-size: 16px; flex-shrink: 0; }
+.map-search-bar input {
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--text);
+  font-size: 15px;
+  flex: 1;
+}
+
+.map-search-bar input::placeholder { color: var(--muted); }
+
+.filter-tabs {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.filter-tab {
+  padding: 6px 14px;
+  border-radius: 50px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  background: none;
+}
+
+.filter-tab.active, .filter-tab:hover {
+  background: var(--gold);
+  color: #000;
+  border-color: var(--gold);
+}
+
+/* Location cards */
+.location-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  padding: 0 60px 30px;
+}
+
+.location-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  cursor: pointer;
+  transition: var(--transition);
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+}
+
+.location-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--gold), var(--blue));
+  transform: scaleX(0);
+  transition: var(--transition);
+}
+
+.location-card:hover { border-color: var(--gold); transform: translateY(-4px); box-shadow: 0 16px 40px var(--gold-glow2); }
+.location-card:hover::before { transform: scaleX(1); }
+.location-card.live-card { border-color: rgba(0,255,136,0.3); }
+.location-card.live-card::before { transform: scaleX(1); background: linear-gradient(90deg, var(--green), var(--blue)); }
+
+.loc-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.loc-icon   { font-size: 32px; }
+.loc-badge  { font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; letter-spacing: 1px; }
+.loc-badge.live   { background: rgba(0,255,136,0.12); color: var(--green); border: 1px solid rgba(0,255,136,0.25); }
+.loc-badge.demo   { background: rgba(244,196,48,0.1); color: var(--gold); border: 1px solid var(--border); }
+.loc-badge.ev     { background: rgba(0,200,255,0.1); color: var(--blue); border: 1px solid rgba(0,200,255,0.25); }
+
+.loc-name  { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+.loc-addr  { font-size: 12px; color: var(--muted); margin-bottom: 12px; }
+.loc-stats { display: flex; gap: 14px; }
+.loc-stat  { font-size: 12px; }
+.loc-stat .n { font-weight: 700; color: var(--gold); }
+.loc-stat .l { color: var(--muted); }
+
+/* Slot Grid Panel */
+.slot-panel-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(8px);
+  z-index: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: var(--transition);
+}
+
+.slot-panel-overlay.open { opacity: 1; pointer-events: all; }
+
+.slot-panel {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 36px;
+  width: 90%;
+  max-width: 760px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.7);
+  transform: scale(0.9) translateY(20px);
+  transition: var(--transition);
+}
+
+.slot-panel-overlay.open .slot-panel {
+  transform: scale(1) translateY(0);
+}
+
+.slot-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--border);
+}
+
+.slot-panel-header h2 { font-size: 20px; font-weight: 800; color: var(--gold); }
+.slot-panel-header p  { font-size: 13px; color: var(--muted); margin-top: 3px; }
+
+.close-panel {
+  width: 36px; height: 36px;
+  background: var(--glass2);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  transition: var(--transition);
+  color: var(--text);
+}
+
+.close-panel:hover { background: var(--red); color: #fff; border-color: var(--red); }
+
+/* Status legend */
+.slot-legend {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
+.legend-dot  { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.legend-dot.available { background: var(--green); box-shadow: 0 0 6px var(--green); }
+.legend-dot.occupied  { background: var(--red); box-shadow: 0 0 6px var(--red); }
+.legend-dot.reserved  { background: var(--yellow); box-shadow: 0 0 6px var(--yellow); }
+.legend-dot.ev        { background: var(--blue); box-shadow: 0 0 6px var(--blue); }
+
+/* Slot grid */
+.slot-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 14px;
+  margin-bottom: 28px;
+}
+
+/* REAL slots (slot1, slot2) */
+.slot-item {
+  background: #111;
+  border-radius: 14px;
+  border: 2px solid #333;
+  padding: 18px 12px;
+  text-align: center;
+  transition: var(--transition);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.slot-item::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  opacity: 0;
+  transition: var(--transition);
+}
+
+.slot-item:hover { transform: translateY(-3px); }
+
+.slot-item.available {
+  background: rgba(0,255,136,0.08);
+  border-color: var(--green);
+  box-shadow: 0 0 20px var(--green-glow);
+}
+
+.slot-item.available::before { background: radial-gradient(circle at 50% 0%, rgba(0,255,136,0.1), transparent 70%); opacity: 1; }
+
+.slot-item.booked,
+.slot-item.occupied {
+  background: rgba(255,51,85,0.08);
+  border-color: var(--red);
+  box-shadow: 0 0 20px var(--red-glow);
+}
+
+.slot-item.booked::before,
+.slot-item.occupied::before { background: radial-gradient(circle at 50% 0%, rgba(255,51,85,0.1), transparent 70%); opacity: 1; }
+
+.slot-item.reserved {
+  background: rgba(255,204,0,0.08);
+  border-color: var(--yellow);
+  box-shadow: 0 0 20px var(--yellow-glow);
+}
+
+.slot-item.ev-charging {
+  background: rgba(0,200,255,0.08);
+  border-color: var(--blue);
+  box-shadow: 0 0 20px var(--blue-glow);
+}
+
+.slot-item .car { font-size: 36px; margin-bottom: 8px; transition: var(--transition); }
+.slot-item.available .car { filter: drop-shadow(0 0 8px var(--green)); }
+.slot-item.booked .car,
+.slot-item.occupied .car { filter: drop-shadow(0 0 8px var(--red)); }
+.slot-item.ev-charging .car { filter: drop-shadow(0 0 8px var(--blue)); }
+
+.slot-label   { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
+.slot-status  { font-size: 10px; color: var(--muted); }
+
+.slot-ev-icon {
+  position: absolute;
+  top: 6px; right: 6px;
+  font-size: 12px;
+  color: var(--blue);
+  background: rgba(0,200,255,0.15);
+  padding: 3px 5px;
+  border-radius: 6px;
+}
+
+.slot-real-badge {
+  position: absolute;
+  top: 6px; left: 6px;
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--gold);
+  background: var(--gold-glow2);
+  padding: 2px 6px;
+  border-radius: 6px;
+  letter-spacing: 0.5px;
+  border: 1px solid var(--border);
+}
+
+/* Global status */
+.global-status {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding: 0 60px 20px;
+}
+
+.gstat {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  backdrop-filter: blur(10px);
+}
+
+.gstat .icon { font-size: 22px; }
+.gstat .val  { font-weight: 700; color: var(--gold); }
+.gstat .lbl  { color: var(--muted); font-size: 12px; }
+
+.last-updated {
+  font-size: 12px;
+  color: var(--muted);
+  padding: 0 60px 40px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+@media(max-width: 700px) {
+  .map-hero { padding: 28px 20px 16px; }
+  .map-search-bar { margin: 0 20px 20px; }
+  .location-grid { padding: 0 20px 20px; grid-template-columns: 1fr; }
+  .global-status { padding: 0 20px 16px; }
+  .last-updated  { padding: 0 20px 30px; }
+  .slot-panel { padding: 24px 18px; }
+  .slot-grid  { grid-template-columns: repeat(3, 1fr); }
+  .filter-tabs { display: none; }
+}
+
+/* ============================================================
+   SECTION: EV CHARGING SYSTEM
+   ============================================================ */
+#page-ev { background: var(--bg); }
+
+.ev-hero {
+  padding: 50px 60px 30px;
+  text-align: center;
+  background: linear-gradient(180deg, var(--bg2) 0%, var(--bg) 100%);
+  border-bottom: 1px solid var(--border);
+}
+
+.ev-hero h1 { font-size: 38px; font-weight: 900; }
+.ev-hero h1 .ev-blue { color: var(--blue); }
+.ev-hero h1 .ev-gold { color: var(--gold); }
+.ev-hero p  { color: var(--muted); margin-top: 10px; font-size: 15px; }
+
+.ev-layout {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 24px;
+  padding: 36px 60px 60px;
+  align-items: start;
+}
+
+/* EV Dashboard */
+.ev-dashboard {
+  background: var(--card);
+  border: 1px solid rgba(0,200,255,0.25);
+  border-radius: var(--radius);
+  padding: 28px;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 0 40px rgba(0,200,255,0.08);
+}
+
+.ev-dashboard h3 {
+  color: var(--blue);
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ev-slot-select {
+  margin-bottom: 20px;
+}
+
+.ev-slot-select label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--muted);
+  margin-bottom: 6px;
+  display: block;
+}
+
+/* Battery */
+.battery-container {
+  margin: 20px 0;
+}
+
+.battery-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+.battery-label .pct { font-weight: 800; font-size: 22px; color: var(--blue); }
+.battery-label .lbl { font-size: 11px; color: var(--muted); text-align: right; margin-top: 6px; }
+
+.battery-shell {
+  background: rgba(255,255,255,0.06);
+  border-radius: 10px;
+  height: 20px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  position: relative;
+}
+
+.battery-fill {
+  height: 100%;
+  border-radius: 10px;
+  background: linear-gradient(90deg, var(--blue), #7b2fff);
+  transition: width 1s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.battery-fill.charging::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+  animation: shine 1.5s infinite;
+}
+
+@keyframes shine {
+  to { left: 100%; }
+}
+
+.battery-fill.low { background: linear-gradient(90deg, var(--red), #ff8800); }
+
+/* EV Status */
+.ev-status {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  margin: 16px 0;
+}
+
+.ev-status-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  font-size: 13px;
+}
+
+.ev-status-row:last-child { border-bottom: none; padding-bottom: 0; }
+.ev-status-row .key { color: var(--muted); }
+.ev-status-row .val { font-weight: 600; }
+.ev-status-row .val.green  { color: var(--green); }
+.ev-status-row .val.blue   { color: var(--blue); }
+.ev-status-row .val.yellow { color: var(--yellow); }
+.ev-status-row .val.red    { color: var(--red); }
+
+/* EV Controls */
+.ev-controls { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
+
+.ev-btn {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  letter-spacing: 0.3px;
+}
+
+.ev-btn.start {
+  background: linear-gradient(135deg, rgba(0,200,255,0.2), rgba(0,200,255,0.1));
+  border: 1px solid rgba(0,200,255,0.4);
+  color: var(--blue);
+}
+
+.ev-btn.start:hover { background: var(--blue); color: #000; box-shadow: 0 4px 20px var(--blue-glow); }
+
+.ev-btn.stop {
+  background: rgba(255,51,85,0.1);
+  border: 1px solid rgba(255,51,85,0.3);
+  color: var(--red);
+}
+
+.ev-btn.stop:hover { background: var(--red); color: #fff; box-shadow: 0 4px 20px var(--red-glow); }
+
+.ev-btn.toggle {
+  background: rgba(244,196,48,0.08);
+  border: 1px solid var(--border);
+  color: var(--gold);
+}
+
+.ev-btn.toggle:hover { background: var(--gold); color: #000; box-shadow: 0 4px 20px var(--gold-glow); }
+
+/* EV slot cards */
+.ev-slots-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.ev-slot-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px;
+  backdrop-filter: blur(10px);
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.ev-slot-card.charging {
+  border-color: rgba(0,200,255,0.4);
+  box-shadow: 0 0 30px rgba(0,200,255,0.12);
+}
+
+.ev-slot-card.discharging {
+  border-color: rgba(244,196,48,0.4);
+  box-shadow: 0 0 30px var(--gold-glow2);
+}
+
+.ev-slot-card.idle { border-color: var(--border); }
+
+.ev-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.ev-card-name  { font-weight: 700; font-size: 15px; }
+.ev-card-badge { font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px; }
+.ev-card-badge.charging    { background: rgba(0,200,255,0.15); color: var(--blue); border: 1px solid rgba(0,200,255,0.3); }
+.ev-card-badge.discharging { background: rgba(244,196,48,0.12); color: var(--gold); border: 1px solid var(--border); }
+.ev-card-badge.idle        { background: rgba(255,255,255,0.05); color: var(--muted); border: 1px solid var(--border); }
+.ev-card-badge.real        { background: rgba(0,255,136,0.1); color: var(--green); border: 1px solid rgba(0,255,136,0.25); }
+
+.ev-mini-bar {
+  background: rgba(255,255,255,0.06);
+  border-radius: 6px;
+  height: 8px;
+  overflow: hidden;
+  margin: 10px 0 6px;
+  border: 1px solid var(--border);
+}
+
+.ev-mini-fill {
+  height: 100%;
+  border-radius: 6px;
+  background: linear-gradient(90deg, var(--blue), #7b2fff);
+  transition: width 1s ease;
+}
+
+.ev-card-pct   { font-size: 22px; font-weight: 800; color: var(--blue); }
+.ev-card-stats { font-size: 11px; color: var(--muted); margin-top: 6px; }
+
+.ev-charging-anim {
+  font-size: 30px;
+  text-align: center;
+  margin-bottom: 10px;
+  animation: chargePulse 1s ease-in-out infinite;
+}
+
+@keyframes chargePulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.6; transform: scale(1.15); }
+}
+
+@media(max-width: 900px) {
+  .ev-layout { grid-template-columns: 1fr; padding: 24px 20px 50px; }
+  .ev-hero   { padding: 40px 20px 24px; }
+}
+
+/* ============================================================
+   SECTION: PAGE — LOGIN / AUTH
+   ============================================================ */
+#page-login { background: var(--bg); }
+
+.auth-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 72px);
+  padding: 40px 20px;
+}
+
+.container {
+  position: relative;
+  width: 850px;
+  height: 520px;
+  background: var(--card);
+  border-radius: 24px;
+  box-shadow: 0 0 60px var(--gold-glow2);
+  overflow: hidden;
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--border);
+}
+
+.form-box {
+  position: absolute;
+  top: 0; height: 100%; width: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 40px;
+  transition: 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.form-box h2 { color: var(--gold); margin-bottom: 24px; font-weight: 800; font-size: 24px; }
+
+.input-group { position: relative; margin: 12px 0; width: 100%; }
+
+.input-group input {
+  width: 100%;
+  padding: 13px 42px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  border-radius: 50px;
+  color: var(--text);
+  outline: none;
+  transition: var(--transition);
+  font-size: 14px;
+}
+
+.input-group i {
+  position: absolute;
+  left: 16px; top: 50%;
+  transform: translateY(-50%);
+  color: var(--gold);
+  font-size: 14px;
+}
+
+.input-group input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px var(--gold-glow2); }
+
+.form-btn {
+  padding: 13px 36px;
+  border: none;
+  border-radius: 50px;
+  background: linear-gradient(135deg, var(--gold), var(--gold-dim));
+  color: #000;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition);
+  margin-top: 18px;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 20px var(--gold-glow);
+}
+
+.form-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 30px var(--gold-glow); }
+
+.login-box    { left: 0; z-index: 2; }
+.register-box { right: -50%; background: rgba(0,0,0,0.6); }
+
+.container.active .login-box    { transform: translateX(-100%); }
+.container.active .register-box { transform: translateX(-100%); }
+
+.toggle-panel {
+  position: absolute;
+  right: 0; top: 0;
+  width: 50%; height: 100%;
+  background: linear-gradient(135deg, #1a1010, #1a1500, #0a1a0a);
+  border-left: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  transition: 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 40px;
+}
+
+.toggle-panel h3 { font-size: 26px; margin-bottom: 16px; color: var(--gold); }
+.toggle-panel p  { margin-bottom: 24px; font-weight: 500; color: var(--muted); font-size: 14px; line-height: 1.6; }
+.toggle-panel .form-btn { background: transparent; border: 2px solid var(--gold); color: var(--gold); box-shadow: none; }
+.toggle-panel .form-btn:hover { background: var(--gold); color: #000; }
+
+.container.active .toggle-panel { transform: translateX(-100%); }
+
+@media(max-width: 900px) {
+  .container { width: 95%; height: auto; min-height: 550px; }
+  .form-box  { position: relative; width: 100%; height: auto; }
+  .login-box    { display: none; }
+  .container.active .login-box { display: flex; position: relative; transform: none; }
+  .register-box { right: 0; position: relative; display: none; }
+  .container.active .register-box { display: flex; transform: none; }
+  .toggle-panel { position: relative; width: 100%; }
+  .container.active .toggle-panel { transform: none; display: none; }
+}
+
+/* ============================================================
+   SECTION: PAGE — SYSTEM ARCHITECTURE
+   ============================================================ */
+#page-system { background: var(--bg); }
+
+.about {
+  padding: 60px 80px;
+  min-height: calc(100vh - 72px);
+  display: flex;
+  align-items: center;
+}
+
+.about-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  gap: 60px;
+}
+
+.about-left { max-width: 580px; }
+.about-left h1 { font-size: 42px; font-weight: 900; margin-bottom: 20px; line-height: 1.2; }
+.about-left h1 span { color: var(--gold); }
+.about-left p { margin-bottom: 18px; color: var(--muted); line-height: 1.8; font-size: 15px; }
+
+.about-features {
+  margin-top: 28px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.feature {
+  background: var(--glass);
+  border: 1px solid var(--border);
+  padding: 14px 16px;
+  border-radius: 12px;
+  transition: var(--transition);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.feature:hover { background: var(--gold); color: #000; border-color: var(--gold); transform: translateY(-2px); }
+
+.about-right { display: flex; justify-content: center; align-items: center; flex-shrink: 0; }
+
+.about-box {
+  width: 340px; height: 340px;
+  background: linear-gradient(135deg, #1a1a2e, #0f3460, #16213e);
+  border-radius: 40px;
+  transform: rotate(10deg);
+  box-shadow: 0 0 60px rgba(244,196,48,0.2), 0 0 100px rgba(0,200,255,0.1);
+  border: 1px solid rgba(244,196,48,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 100px;
+  animation: float 5s ease-in-out infinite;
+}
+
+/* Architecture diagram */
+.arch-diagram {
+  padding: 0 80px 60px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  position: relative;
+}
+
+.arch-node {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px;
+  text-align: center;
+  transition: var(--transition);
+  backdrop-filter: blur(10px);
+}
+
+.arch-node:hover { border-color: var(--gold); transform: translateY(-4px); box-shadow: 0 16px 40px var(--gold-glow2); }
+.arch-node .arch-icon { font-size: 36px; margin-bottom: 10px; }
+.arch-node h4 { font-size: 14px; font-weight: 700; color: var(--gold); margin-bottom: 6px; }
+.arch-node p  { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+/* Popup */
+.popup-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.8);
+  backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  visibility: hidden;
+  opacity: 0;
+  transition: var(--transition);
+  z-index: 1000;
+}
+
+.popup-overlay.active { visibility: visible; opacity: 1; }
+
+.popup-box {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  padding: 40px;
+  border-radius: var(--radius);
+  width: 420px;
+  text-align: center;
+  box-shadow: 0 0 60px var(--gold-glow2);
+  animation: scaleUp 0.3s ease;
+}
+
+@keyframes scaleUp { from { transform: scale(0.85); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+.popup-box h2  { color: var(--gold); margin-bottom: 18px; font-size: 20px; }
+.popup-box p   { color: var(--muted); margin-bottom: 24px; line-height: 1.6; }
+.popup-btn {
+  background: linear-gradient(135deg, var(--gold), var(--gold-dim));
+  padding: 12px 28px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition);
+  color: #000;
+}
+.popup-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 16px var(--gold-glow); }
+
+@media(max-width: 900px) {
+  .about { padding: 40px 20px; }
+  .about-container { flex-direction: column; text-align: center; }
+  .about-box { margin-top: 40px; width: 220px; height: 220px; }
+  .about-features { grid-template-columns: 1fr; }
+  .arch-diagram { grid-template-columns: repeat(2,1fr); padding: 0 20px 40px; }
 }
 
 </style>
 </head>
-
 <body>
 
-<nav>
-<div class="logo">Smart Parking</div>
-<ul class="nav-links">
-<li><a href="index.html">Home</a></li>
-<li><a href="about.html">About</a></li>
-<li><a href="booking.html">Booking</a></li>
-<li><a href="map.html">Map</a></li>
-<li><a href="login.html">Login</a></li>
-<li><a href="system.html">System Architecture</a></li>
-</ul>
-</nav>
+<!-- ============================================================
+     TOAST CONTAINER
+     ============================================================ -->
+<div id="toast-container"></div>
 
-<section class="hero">
-<div class="left">
-<h1>Next Gen <span>Smart Parking</span> System</h1>
-<p>Real-time slot detection using ESP32 + Ultrasonic Sensors + Firebase.</p>
-<a href="booking.html"><button class="btn">Book Slot</button></a>
+<!-- ============================================================
+     PAGE: HOME
+     ============================================================ -->
+<div class="page active" id="page-home">
+
+  <!-- Animated Grid Background -->
+  <div class="grid-bg"></div>
+
+  <nav>
+    <div class="logo" onclick="navigate('home')">SmartPark</div>
+    <div class="menu-toggle" onclick="toggleMenu('nav-home')">&#9776;</div>
+    <ul class="nav-links" id="nav-home">
+      <li><a onclick="navigate('home')" class="active">Home</a></li>
+      <li><a onclick="navigate('team')">About</a></li>
+      <li><a onclick="navigate('booking')">Booking</a></li>
+      <li><a onclick="navigate('map')">Live Map</a></li>
+      <li><a onclick="navigate('ev')">EV Charging</a></li>
+      <li><a onclick="navigate('login')">Login</a></li>
+      <li><a onclick="navigate('system')">Architecture</a></li>
+    </ul>
+    <div class="user-badge" id="nav-user-badge" style="display:none;">
+      <i class="fas fa-user-circle"></i>
+      <span id="nav-user-name">User</span>
+    </div>
+  </nav>
+
+  <!-- System Status Strip -->
+  <div class="sys-status-strip">
+    <div class="sys-status-item">
+      <span class="sys-status-dot"></span>
+      System Online
+    </div>
+    <div class="sys-status-item">
+      <span class="sys-status-dot"></span>
+      Firebase Connected
+    </div>
+    <div class="sys-status-item">
+      <span class="sys-status-dot"></span>
+      Real-Time Sync Active
+    </div>
+  </div>
+
+  <section class="hero">
+    <div class="hero-left">
+      <div class="hero-badge">
+        <span class="dot"></span>
+        Live Prototype Active — Ambience Mall, Delhi
+      </div>
+      <h1>
+        Next-Gen <span class="gold">Smart Parking</span><br>
+        &amp; <span class="blue">EV Charging</span> Platform
+      </h1>
+      <p>Real-time slot detection powered by ESP32, Ultrasonic Sensors &amp; Firebase — combined with intelligent EV charging management for smart cities.</p>
+      <div class="hero-actions">
+        <button class="btn-primary" onclick="navigate('booking')"><i class="fas fa-bolt"></i> Book a Slot</button>
+        <button class="btn-outline" onclick="navigate('map')">Live Map →</button>
+      </div>
+
+      <div class="hero-trust">
+        <span><i class="fas fa-check-circle"></i> Real-time IoT Data</span>
+        <span><i class="fas fa-check-circle"></i> Firebase Sync</span>
+        <span><i class="fas fa-check-circle"></i> Live EV Monitoring</span>
+      </div>
+
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="num" id="hero-total">—</div>
+          <div class="lbl">Total Slots</div>
+        </div>
+        <div class="hero-stat">
+          <div class="num" id="hero-available">—</div>
+          <div class="lbl">Available</div>
+        </div>
+        <div class="hero-stat">
+          <div class="num">24/7</div>
+          <div class="lbl">Live Data</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="hero-orbit"></div>
+      <div class="hero-orbit"></div>
+      <div class="hero-card">
+        <!-- Corner decorations -->
+        <div class="hc-corner tl"></div>
+        <div class="hc-corner tr"></div>
+        <div class="hc-corner bl"></div>
+        <div class="hc-corner br"></div>
+
+        <!-- hidden for JS safety -->
+        <div class="hero-card-inner"></div>
+
+        <!-- System status header -->
+        <div class="hc-header">
+          <div class="hc-header-title">
+            <i class="fas fa-satellite-dish"></i>
+            System Status
+          </div>
+          <div class="hc-live-dot">Live</div>
+        </div>
+
+        <div class="hc-location">Node: Ambience Mall &middot; NH-8, Gurugram &middot; ESP32-UNIT-01</div>
+
+        <div class="hc-slot-grid">
+          <div class="hc-slot available">
+            <div class="hc-slot-icon"><i class="fas fa-circle-check"></i></div>
+            <div class="hc-slot-label">Available</div>
+            <div class="hc-slot-num">S-01</div>
+          </div>
+          <div class="hc-slot occupied">
+            <div class="hc-slot-icon"><i class="fas fa-car"></i></div>
+            <div class="hc-slot-label">Occupied</div>
+            <div class="hc-slot-num">S-02</div>
+          </div>
+          <div class="hc-slot ev">
+            <div class="hc-slot-icon"><i class="fas fa-bolt"></i></div>
+            <div class="hc-slot-label">EV Charge</div>
+            <div class="hc-slot-num">S-03</div>
+          </div>
+          <div class="hc-slot available">
+            <div class="hc-slot-icon"><i class="fas fa-circle-check"></i></div>
+            <div class="hc-slot-label">Available</div>
+            <div class="hc-slot-num">S-04</div>
+          </div>
+          <div class="hc-slot occupied">
+            <div class="hc-slot-icon"><i class="fas fa-car"></i></div>
+            <div class="hc-slot-label">Occupied</div>
+            <div class="hc-slot-num">S-05</div>
+          </div>
+          <div class="hc-slot ev">
+            <div class="hc-slot-icon"><i class="fas fa-bolt"></i></div>
+            <div class="hc-slot-label">EV Charge</div>
+            <div class="hc-slot-num">S-06</div>
+          </div>
+        </div>
+
+        <div class="hc-footer">
+          <div class="hc-stat">
+            <div class="hc-stat-val">6</div>
+            <div class="hc-stat-lbl">Total</div>
+          </div>
+          <div class="hc-divider"></div>
+          <div class="hc-stat">
+            <div class="hc-stat-val" style="color:var(--green);text-shadow:0 0 14px rgba(0,255,136,0.4);">2</div>
+            <div class="hc-stat-lbl">Free</div>
+          </div>
+          <div class="hc-divider"></div>
+          <div class="hc-stat">
+            <div class="hc-stat-val" style="color:var(--blue);text-shadow:0 0 14px rgba(0,200,255,0.4);">2</div>
+            <div class="hc-stat-lbl">EV</div>
+          </div>
+          <div class="hc-divider"></div>
+          <div class="hc-stat">
+            <div class="hc-stat-val" style="color:var(--red);text-shadow:0 0 14px rgba(255,51,85,0.4);">2</div>
+            <div class="hc-stat-lbl">Taken</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="features-strip">
+    <div class="feat-card">
+      <div class="feat-icon"><i class="fas fa-microchip"></i></div>
+      <h3>Real-Time IoT Detection</h3>
+      <p>ESP32 + Ultrasonic sensors push live slot data to Firebase every second — zero latency.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon"><i class="fas fa-bolt"></i></div>
+      <h3>EV Charging Management</h3>
+      <p>Integrated EV charging &amp; discharging control with battery monitoring per slot.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon"><i class="fas fa-map-marked-alt"></i></div>
+      <h3>Smart Slot Finder</h3>
+      <p>Visual live map with slot-level status, filtering, and pre-booking in seconds.</p>
+    </div>
+  </div>
+
+  <footer>&copy; 2026 SmartPark | Smart Parking &amp; EV Charging Management System</footer>
 </div>
 
-<div class="car-box"></div>
-</section>
+<!-- ============================================================
+     PAGE: ABOUT (TEAM)
+     ============================================================ -->
+<div class="page" id="page-team">
+  <nav>
+    <div class="logo" onclick="navigate('home')">SmartPark</div>
+    <div class="menu-toggle" onclick="toggleMenu('nav-team')">&#9776;</div>
+    <ul class="nav-links" id="nav-team">
+      <li><a onclick="navigate('home')">Home</a></li>
+      <li><a onclick="navigate('team')" class="active">About</a></li>
+      <li><a onclick="navigate('booking')">Booking</a></li>
+      <li><a onclick="navigate('map')">Live Map</a></li>
+      <li><a onclick="navigate('ev')">EV Charging</a></li>
+      <li><a onclick="navigate('login')">Login</a></li>
+      <li><a onclick="navigate('system')">Architecture</a></li>
+    </ul>
+  </nav>
 
+  <section class="team-hero">
+    <h1>About Our Project</h1>
+    <p>Smart Parking Management System is an IoT-based solution designed to solve real-world urban parking problems. Using ESP32, Ultrasonic Sensors, and Firebase Realtime Database, we provide live parking slot monitoring, EV charging management, pre-booking, and smart dashboard analytics.</p>
+  </section>
 
+  <section class="team">
+    <div class="section-title"><h2>Meet Our Team</h2><div class="title-line"></div></div>
+    <div class="team-grid">
 
-<footer>
-© 2026 Smart Parking System | Prototype Version
-</footer>
+      <div class="member-card">
+        <div class="member-avatar">👨‍💻</div>
+        <h3>Aayush Bhatti</h3>
+        <p class="role">Project Lead &amp; IoT Developer</p>
+        <p class="skills">ESP32 • Firebase • Web Development • System Architecture</p>
+        <div class="social">
+          <i class="fab fa-linkedin"></i>
+          <i class="fab fa-github"></i>
+          <i class="fas fa-envelope"></i>
+        </div>
+      </div>
+
+      <div class="member-card">
+        <div class="member-avatar">🎨</div>
+        <h3>Atul</h3>
+        <p class="role">Frontend Developer</p>
+        <p class="skills">HTML • CSS • JavaScript • UI/UX Design</p>
+        <div class="social">
+          <i class="fab fa-linkedin"></i>
+          <i class="fab fa-github"></i>
+          <i class="fas fa-envelope"></i>
+        </div>
+      </div>
+
+      <div class="member-card">
+        <div class="member-avatar">🌸</div>
+        <h3>Muskan</h3>
+        <p class="role">Frontend Developer</p>
+        <p class="skills">HTML • CSS • JavaScript • UI/UX Design</p>
+        <div class="social">
+          <i class="fab fa-linkedin"></i>
+          <i class="fab fa-github"></i>
+          <i class="fas fa-envelope"></i>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <footer>&copy; 2026 SmartPark | Built with Innovation 🚀</footer>
+</div>
+
+<!-- ============================================================
+     PAGE: BOOKING
+     ============================================================ -->
+<div class="page" id="page-booking">
+  <nav>
+    <div class="logo" onclick="navigate('home')">SmartPark</div>
+    <div class="menu-toggle" onclick="toggleMenu('nav-booking')">&#9776;</div>
+    <ul class="nav-links" id="nav-booking">
+      <li><a onclick="navigate('home')">Home</a></li>
+      <li><a onclick="navigate('team')">About</a></li>
+      <li><a onclick="navigate('booking')" class="active">Booking</a></li>
+      <li><a onclick="navigate('map')">Live Map</a></li>
+      <li><a onclick="navigate('ev')">EV Charging</a></li>
+      <li><a onclick="navigate('login')">Login</a></li>
+      <li><a onclick="navigate('system')">Architecture</a></li>
+    </ul>
+  </nav>
+
+  <div class="booking-wrapper">
+    <div class="booking-card">
+      <h1><i class="fas fa-parking" style="margin-right:10px;"></i>Book Your Slot</h1>
+      <p class="sub">Reserve a parking slot at Ambience Mall in real-time</p>
+
+      <div class="form-field">
+        <label>Select Location</label>
+        <div class="select-wrapper">
+          <select>
+            <option>Ambience Mall, Delhi (LIVE)</option>
+            <option>Select Mall Demo</option>
+            <option>DLF Cyber City Demo</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-field">
+        <label>Select Slot</label>
+        <div class="select-wrapper">
+          <select id="slot">
+            <option value="slot1">Slot 1 — Ground Floor</option>
+            <option value="slot2">Slot 2 — Ground Floor</option>
+            <option value="slot3">Slot 3 — Level 1 (Demo)</option>
+            <option value="slot4">Slot 4 — Level 1 (Demo)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-field">
+        <label>Vehicle Number</label>
+        <input class="form-input" type="text" id="vehicle-number" placeholder="e.g. DL 01 AB 1234">
+      </div>
+
+      <!-- UNIFIED BILLING SYSTEM — Step 1 additions -->
+      <div style="background:rgba(244,196,48,0.06);border:1px solid rgba(244,196,48,0.25);border-radius:12px;padding:18px 20px;margin-bottom:18px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;">
+          <i class="fas fa-receipt" style="color:var(--gold);font-size:13px;"></i>
+          <span style="font-size:12px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:1px;">Unified Billing System</span>
+        </div>
+
+        <!-- Duration Selector -->
+        <div class="form-field" style="margin-bottom:14px;">
+          <label>Parking Duration</label>
+          <div class="select-wrapper">
+            <select id="duration" onchange="updatePriceDisplay()">
+              <option value="30">30 Minutes — ₹20</option>
+              <option value="60">1 Hour — ₹30</option>
+              <option value="120">2 Hours — ₹50</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- EV Charging Toggle -->
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:rgba(0,200,255,0.06);border:1px solid rgba(0,200,255,0.2);border-radius:10px;margin-bottom:14px;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <i class="fas fa-bolt" style="color:var(--blue);font-size:16px;"></i>
+            <div>
+              <div style="font-size:13px;font-weight:600;color:var(--text);">EV Charging</div>
+              <div style="font-size:11px;color:var(--muted);">₹2/min · billed with parking</div>
+            </div>
+          </div>
+          <label style="position:relative;display:inline-block;width:44px;height:24px;cursor:pointer;">
+            <input type="checkbox" id="ev-toggle" onchange="updatePriceDisplay()" style="opacity:0;width:0;height:0;">
+            <span id="ev-toggle-track" style="position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(255,255,255,0.1);border-radius:24px;border:1px solid var(--border);transition:0.3s;">
+              <span id="ev-toggle-thumb" style="position:absolute;top:3px;left:3px;width:16px;height:16px;background:var(--muted);border-radius:50%;transition:0.3s;"></span>
+            </span>
+          </label>
+        </div>
+
+        <!-- Price Display Breakdown -->
+        <div id="price-display" style="background:rgba(0,0,0,0.2);border-radius:10px;padding:14px 16px;border:1px solid rgba(255,255,255,0.06);">
+          <div style="display:flex;justify-content:space-between;font-size:13px;padding:4px 0;">
+            <span style="color:var(--muted);">🅿️ Parking</span>
+            <span id="base-price-display" style="color:var(--text);font-weight:600;">₹20</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:13px;padding:4px 0;" id="ev-cost-row" style="display:none;">
+            <span style="color:var(--muted);">⚡ EV Charging</span>
+            <span id="ev-cost-display" style="color:var(--blue);font-weight:600;">₹0</span>
+          </div>
+          <div style="height:1px;background:rgba(255,255,255,0.07);margin:8px 0;"></div>
+          <div style="display:flex;justify-content:space-between;font-size:15px;">
+            <span style="color:var(--gold);font-weight:700;">Total Prepaid</span>
+            <span id="total-price-display" style="color:var(--gold);font-weight:800;">₹20</span>
+          </div>
+        </div>
+      </div>
+
+      <button class="booking-btn" onclick="bookSlot()"><i class="fas fa-bolt"></i> Confirm &amp; Pay ₹<span id="btn-price">20</span></button>
+      <p id="msg"></p>
+    </div>
+
+    <!-- Booking timer widget — shows after booking -->
+    <div class="booking-timer" id="booking-timer">
+      <h3>⏱ Booking Active</h3>
+      <div class="timer-circle">
+        <div class="timer-num" id="timer-display">5:00</div>
+        <div class="timer-lbl">remaining</div>
+      </div>
+      <div class="timer-slot" id="timer-slot-name">Slot 1</div>
+      <button class="timer-cancel" onclick="cancelBooking()">✕ Cancel Booking</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     PAGE: LIVE MAP (Advanced)
+     ============================================================ -->
+<div class="page" id="page-map">
+  <nav>
+    <div class="logo" onclick="navigate('home')">SmartPark</div>
+    <div class="menu-toggle" onclick="toggleMenu('nav-map')">&#9776;</div>
+    <ul class="nav-links" id="nav-map">
+      <li><a onclick="navigate('home')">Home</a></li>
+      <li><a onclick="navigate('team')">About</a></li>
+      <li><a onclick="navigate('booking')">Booking</a></li>
+      <li><a onclick="navigate('map')" class="active">Live Map</a></li>
+      <li><a onclick="navigate('ev')">EV Charging</a></li>
+      <li><a onclick="navigate('login')">Login</a></li>
+      <li><a onclick="navigate('system')">Architecture</a></li>
+    </ul>
+  </nav>
+
+  <!-- Map hero -->
+  <div class="map-hero">
+    <div class="map-hero-title">
+      <h1>Live Parking Map</h1>
+      <p>Real-time slot availability across locations</p>
+    </div>
+    <div class="live-badge">
+      <span class="dot" style="width:9px;height:9px;background:var(--green);border-radius:50%;animation:pulse-dot 1.5s infinite;"></span>
+      Firebase Connected
+    </div>
+  </div>
+
+  <!-- Search bar -->
+  <div class="map-search-bar">
+    <i class="fas fa-search"></i>
+    <input type="text" id="map-search" placeholder="Search locations, malls, zones..." oninput="filterLocations(this.value)">
+    <div class="filter-tabs">
+      <button class="filter-tab active" onclick="setFilter('all',this)">All</button>
+      <button class="filter-tab" onclick="setFilter('live',this)">Live</button>
+      <button class="filter-tab" onclick="setFilter('ev',this)">EV</button>
+    </div>
+  </div>
+
+  <!-- Global status -->
+  <div class="global-status">
+    <div class="gstat">
+      <span class="icon">🅿️</span>
+      <div>
+        <div class="val" id="totalSlots">—</div>
+        <div class="lbl">Total Slots</div>
+      </div>
+    </div>
+    <div class="gstat">
+      <span class="icon" style="color:var(--green);">✅</span>
+      <div>
+        <div class="val" style="color:var(--green);" id="availableSlots">—</div>
+        <div class="lbl">Available</div>
+      </div>
+    </div>
+    <div class="gstat">
+      <span class="icon" style="color:var(--blue);">⚡</span>
+      <div>
+        <div class="val" style="color:var(--blue);">4</div>
+        <div class="lbl">EV Chargers</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Location cards grid -->
+  <div class="location-grid" id="location-grid">
+
+    <div class="location-card live-card" data-tag="live" onclick="openSlotPanel('ambience')">
+      <div class="loc-header">
+        <span class="loc-icon">🏬</span>
+        <span class="loc-badge live">● LIVE</span>
+      </div>
+      <div class="loc-name">Ambience Mall</div>
+      <div class="loc-addr"><i class="fas fa-map-marker-alt" style="color:var(--gold);margin-right:5px;"></i>NH-8, Gurugram, Delhi NCR</div>
+      <div class="loc-stats">
+        <div class="loc-stat"><span class="n" id="lc-total">—</span> <span class="l">total</span></div>
+        <div class="loc-stat"><span class="n" style="color:var(--green);" id="lc-avail">—</span> <span class="l">free</span></div>
+        <div class="loc-stat"><span class="n" style="color:var(--blue);">2</span> <span class="l">EV</span></div>
+      </div>
+    </div>
+
+    <div class="location-card" data-tag="ev" onclick="openSlotPanel('select')">
+      <div class="loc-header">
+        <span class="loc-icon">🛒</span>
+        <span class="loc-badge ev">⚡ EV</span>
+      </div>
+      <div class="loc-name">Select City Walk</div>
+      <div class="loc-addr"><i class="fas fa-map-marker-alt" style="color:var(--gold);margin-right:5px;"></i>Saket, South Delhi</div>
+      <div class="loc-stats">
+        <div class="loc-stat"><span class="n">12</span> <span class="l">total</span></div>
+        <div class="loc-stat"><span class="n" style="color:var(--green);">7</span> <span class="l">free</span></div>
+        <div class="loc-stat"><span class="n" style="color:var(--blue);">4</span> <span class="l">EV</span></div>
+      </div>
+    </div>
+
+    <div class="location-card" data-tag="demo" onclick="openSlotPanel('dlf')">
+      <div class="loc-header">
+        <span class="loc-icon">🏢</span>
+        <span class="loc-badge demo">DEMO</span>
+      </div>
+      <div class="loc-name">DLF Cyber City</div>
+      <div class="loc-addr"><i class="fas fa-map-marker-alt" style="color:var(--gold);margin-right:5px;"></i>Phase II, Gurugram</div>
+      <div class="loc-stats">
+        <div class="loc-stat"><span class="n">20</span> <span class="l">total</span></div>
+        <div class="loc-stat"><span class="n" style="color:var(--green);">11</span> <span class="l">free</span></div>
+        <div class="loc-stat"><span class="n" style="color:var(--blue);">6</span> <span class="l">EV</span></div>
+      </div>
+    </div>
+
+    <div class="location-card" data-tag="demo" onclick="openSlotPanel('pacific')">
+      <div class="loc-header">
+        <span class="loc-icon">🌊</span>
+        <span class="loc-badge demo">DEMO</span>
+      </div>
+      <div class="loc-name">Pacific Mall</div>
+      <div class="loc-addr"><i class="fas fa-map-marker-alt" style="color:var(--gold);margin-right:5px;"></i>Subhash Nagar, Delhi</div>
+      <div class="loc-stats">
+        <div class="loc-stat"><span class="n">8</span> <span class="l">total</span></div>
+        <div class="loc-stat"><span class="n" style="color:var(--green);">3</span> <span class="l">free</span></div>
+        <div class="loc-stat"><span class="n" style="color:var(--blue);">2</span> <span class="l">EV</span></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="last-updated">
+    <i class="fas fa-sync-alt" style="color:var(--gold);"></i>
+    Last updated: <span id="last-updated-time">Connecting...</span>
+  </div>
+
+  <footer>&copy; 2026 SmartPark | Live Parking Intelligence</footer>
+</div>
+
+<!-- ============================================================
+     SLOT PANEL (Overlay — used by map page)
+     ============================================================ -->
+<div class="slot-panel-overlay" id="slot-panel-overlay" onclick="closeSlotPanel(event)">
+  <div class="slot-panel">
+    <div class="slot-panel-header">
+      <div>
+        <h2 id="slot-panel-title">Ambience Mall</h2>
+        <p id="slot-panel-subtitle">Real-time slot availability</p>
+      </div>
+      <div class="close-panel" onclick="closeSlotPanelBtn()">✕</div>
+    </div>
+
+    <!-- Legend -->
+    <div class="slot-legend">
+      <div class="legend-item"><span class="legend-dot available"></span>Available</div>
+      <div class="legend-item"><span class="legend-dot occupied"></span>Occupied</div>
+      <div class="legend-item"><span class="legend-dot reserved"></span>Reserved</div>
+      <div class="legend-item"><span class="legend-dot ev"></span>EV Charging</div>
+    </div>
+
+    <!-- Slot grid — rendered by JS -->
+    <div class="slot-grid" id="slot-panel-grid">
+      <!-- Real slot1 and slot2 always included for ambience -->
+    </div>
+
+    <div style="text-align:center;margin-top:16px;">
+      <button class="btn-primary" onclick="navigate('booking'); closeSlotPanelBtn();" style="font-size:14px;padding:12px 28px;">
+        <i class="fas fa-bolt"></i> Book a Slot
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     PAGE: EV CHARGING SYSTEM
+     ============================================================ -->
+<div class="page" id="page-ev">
+  <nav>
+    <div class="logo" onclick="navigate('home')">SmartPark</div>
+    <div class="menu-toggle" onclick="toggleMenu('nav-ev')">&#9776;</div>
+    <ul class="nav-links" id="nav-ev">
+      <li><a onclick="navigate('home')">Home</a></li>
+      <li><a onclick="navigate('team')">About</a></li>
+      <li><a onclick="navigate('booking')">Booking</a></li>
+      <li><a onclick="navigate('map')">Live Map</a></li>
+      <li><a onclick="navigate('ev')" class="active">EV Charging</a></li>
+      <li><a onclick="navigate('login')">Login</a></li>
+      <li><a onclick="navigate('system')">Architecture</a></li>
+    </ul>
+  </nav>
+
+  <div class="ev-hero">
+    <h1>⚡ <span class="ev-blue">EV Charging</span> &amp; <span class="ev-gold">Management</span></h1>
+    <p>Monitor, control, and schedule EV charging sessions across all smart slots</p>
+  </div>
+
+  <div class="ev-layout">
+
+    <!-- EV Dashboard Panel -->
+    <div class="ev-dashboard">
+      <h3><i class="fas fa-bolt"></i> EV Control Panel</h3>
+
+      <div class="ev-slot-select">
+        <label>Active Slot</label>
+        <div class="select-wrapper">
+          <select id="ev-slot-select" onchange="selectEVSlot(this.value)">
+            <option value="ev-slot1">Slot 1 — LIVE (Firebase)</option>
+            <option value="ev-slot2">Slot 2 — LIVE (Firebase)</option>
+            <option value="ev-slot3">Slot 3 — Demo</option>
+            <option value="ev-slot4">Slot 4 — Demo</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Charging animation -->
+      <div class="ev-charging-anim" id="ev-charge-icon">⚡</div>
+
+      <!-- Battery display -->
+      <div class="battery-container">
+        <div class="battery-label">
+          <span class="pct" id="ev-battery-pct">72%</span>
+          <span class="lbl" id="ev-battery-est">Est. 1h 20m remaining</span>
+        </div>
+        <div class="battery-shell">
+          <div class="battery-fill" id="ev-battery-bar" style="width:72%"></div>
+        </div>
+      </div>
+
+      <!-- Status rows -->
+      <div class="ev-status">
+        <div class="ev-status-row">
+          <span class="key">Status</span>
+          <span class="val blue" id="ev-status-val">Charging</span>
+        </div>
+        <div class="ev-status-row">
+          <span class="key">Power</span>
+          <span class="val" id="ev-power-val">7.4 kW</span>
+        </div>
+        <div class="ev-status-row">
+          <span class="key">Energy Added</span>
+          <span class="val" id="ev-energy-val">18.5 kWh</span>
+        </div>
+        <div class="ev-status-row">
+          <span class="key">Session Time</span>
+          <span class="val" id="ev-time-val">0:00</span>
+        </div>
+        <div class="ev-status-row">
+          <span class="key">Source</span>
+          <span class="val green" id="ev-source-val">Live Slot</span>
+        </div>
+      </div>
+
+      <!-- Controls -->
+      <div class="ev-controls">
+        <button class="ev-btn start" onclick="evControl('start')">
+          <i class="fas fa-play"></i> Start Charging
+        </button>
+        <button class="ev-btn stop" onclick="evControl('stop')">
+          <i class="fas fa-stop"></i> Stop Charging
+        </button>
+        <button class="ev-btn toggle" onclick="evControl('toggle')">
+          <i class="fas fa-exchange-alt"></i> Toggle Discharge
+        </button>
+      </div>
+    </div>
+
+    <!-- EV slot cards grid -->
+    <div>
+      <div class="section-title" style="text-align:left;margin-bottom:24px;">
+        <h2 style="font-size:22px;">All EV Slots</h2>
+        <p>Live and simulated charging stations</p>
+      </div>
+
+      <div class="ev-slots-grid" id="ev-slots-grid">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+
+  </div>
+
+  <footer>&copy; 2026 SmartPark | EV Charging Management</footer>
+</div>
+
+<!-- ============================================================
+     PAGE: LOGIN / AUTH
+     ============================================================ -->
+<div class="page" id="page-login">
+  <nav>
+    <div class="logo" onclick="navigate('home')">SmartPark</div>
+    <div class="menu-toggle" onclick="toggleMenu('nav-login')">&#9776;</div>
+    <ul class="nav-links" id="nav-login">
+      <li><a onclick="navigate('home')">Home</a></li>
+      <li><a onclick="navigate('team')">About</a></li>
+      <li><a onclick="navigate('booking')">Booking</a></li>
+      <li><a onclick="navigate('map')">Live Map</a></li>
+      <li><a onclick="navigate('ev')">EV Charging</a></li>
+      <li><a onclick="navigate('login')" class="active">Login</a></li>
+      <li><a onclick="navigate('system')">Architecture</a></li>
+    </ul>
+  </nav>
+
+  <div class="auth-wrapper">
+    <div class="container" id="authContainer">
+
+      <!-- LOGIN FORM -->
+      <div class="form-box login-box">
+        <h2>Welcome Back</h2>
+        <div class="input-group">
+          <i class="fa fa-envelope"></i>
+          <input type="email" id="loginEmail" placeholder="Email address">
+        </div>
+        <div class="input-group">
+          <i class="fa fa-lock"></i>
+          <input type="password" id="loginPassword" placeholder="Password">
+        </div>
+        <button class="form-btn" onclick="loginUser()">Sign In</button>
+      </div>
+
+      <!-- REGISTER FORM -->
+      <div class="form-box register-box">
+        <h2>Create Account</h2>
+        <div class="input-group">
+          <i class="fa fa-user"></i>
+          <input type="text" id="regName" placeholder="Full name">
+        </div>
+        <div class="input-group">
+          <i class="fa fa-envelope"></i>
+          <input type="email" id="regEmail" placeholder="Email address">
+        </div>
+        <div class="input-group">
+          <i class="fa fa-lock"></i>
+          <input type="password" id="regPassword" placeholder="Password">
+        </div>
+        <button class="form-btn" onclick="registerUser()">Create Account</button>
+      </div>
+
+      <!-- TOGGLE PANEL -->
+      <div class="toggle-panel">
+        <h3>Hello! 🚀</h3>
+        <p>New to SmartPark? Create your account and start booking smart parking slots today.</p>
+        <button class="form-btn" onclick="toggleAuth()">Sign Up Free</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     PAGE: SYSTEM ARCHITECTURE
+     ============================================================ -->
+<div class="page" id="page-system">
+  <nav>
+    <div class="logo" onclick="navigate('home')">SmartPark</div>
+    <div class="menu-toggle" onclick="toggleMenu('nav-system')">&#9776;</div>
+    <ul class="nav-links" id="nav-system">
+      <li><a onclick="navigate('home')">Home</a></li>
+      <li><a onclick="navigate('team')">About</a></li>
+      <li><a onclick="navigate('booking')">Booking</a></li>
+      <li><a onclick="navigate('map')">Live Map</a></li>
+      <li><a onclick="navigate('ev')">EV Charging</a></li>
+      <li><a onclick="navigate('login')">Login</a></li>
+      <li><a onclick="navigate('system')" class="active">Architecture</a></li>
+    </ul>
+  </nav>
+
+  <section class="about">
+    <div class="about-container">
+      <div class="about-left">
+        <h1>About <span>SmartPark</span></h1>
+        <p>SmartPark is a full-stack IoT-based parking management system that uses ESP32 microcontrollers and ultrasonic sensors to detect vehicle presence and update slot availability in real-time on the web dashboard.</p>
+        <p>Our mission is to reduce traffic congestion, save fuel, digitize parking infrastructure, and integrate EV charging with smart technology for modern cities.</p>
+        <div class="about-features">
+          <div class="feature" onclick="openPopup('Real-Time Monitoring','Our system tracks parking slots in real time using ultrasonic sensors connected to ESP32. Data is pushed to Firebase every second, ensuring zero-latency availability updates on the dashboard.')">
+            🚗 Real-Time Monitoring
+          </div>
+          <div class="feature" onclick="openPopup('IoT Sensors','Smart IoT sensors (HC-SR04 Ultrasonic) detect vehicle presence and send live data to the web dashboard via ESP32 Wi-Fi module and Firebase Realtime Database.')">
+            📡 IoT Sensors
+          </div>
+          <div class="feature" onclick="openPopup('Live Web Dashboard','The web dashboard updates instantly with slot availability, sensor status, EV charging data, and booking confirmations using Firebase onValue listeners.')">
+            🌐 Live Web Dashboard
+          </div>
+          <div class="feature" onclick="openPopup('EV Charging Integration','SmartPark integrates EV charging management directly into the parking platform. Each EV-capable slot supports start/stop/discharge control with real-time battery monitoring via Firebase ev/ paths.')">
+            ⚡ EV Charging
+          </div>
+        </div>
+      </div>
+
+      <div class="about-right">
+        <div class="about-box">📊</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Architecture nodes -->
+  <div class="arch-diagram">
+    <div class="arch-node">
+      <div class="arch-icon">🔌</div>
+      <h4>ESP32</h4>
+      <p>Reads sensor data, processes logic, sends to Firebase over Wi-Fi</p>
+    </div>
+    <div class="arch-node">
+      <div class="arch-icon">📡</div>
+      <h4>HC-SR04</h4>
+      <p>Ultrasonic distance sensor detects vehicle presence per slot</p>
+    </div>
+    <div class="arch-node">
+      <div class="arch-icon">🔥</div>
+      <h4>Firebase RTDB</h4>
+      <p>Realtime database syncs data across all clients instantly</p>
+    </div>
+    <div class="arch-node">
+      <div class="arch-icon">🌐</div>
+      <h4>Web Dashboard</h4>
+      <p>Single-file SPA with live map, booking, and EV control panel</p>
+    </div>
+  </div>
+
+  <footer>&copy; 2026 SmartPark | Smart Parking Management System</footer>
+</div>
+
+<!-- ============================================================
+     POPUP (used by System Architecture page)
+     ============================================================ -->
+<div class="popup-overlay" id="popup">
+  <div class="popup-box">
+    <h2 id="popupTitle"></h2>
+    <p id="popupContent"></p>
+    <button class="popup-btn" onclick="closePopup()">Close</button>
+  </div>
+</div>
+
+<!-- ============================================================
+     FIREBASE MODULE SCRIPT
+     — CORE UNCHANGED — only additions for EV and UI updates
+     ============================================================ -->
+<script type="module">
+
+import { initializeApp }
+  from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, onAuthStateChanged }
+  from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getDatabase, ref, set, onValue }
+  from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+/* ── Firebase Config (UNCHANGED) ── */
+const firebaseConfig = {
+  apiKey:            "AIzaSyDPPCKJM6WQvsVFisQ5SbqBgvWuSt9AYtQ",
+  authDomain:        "smart-parking-system-1cf2a.firebaseapp.com",
+  databaseURL:       "https://smart-parking-system-1cf2a-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId:         "smart-parking-system-1cf2a",
+  storageBucket:     "smart-parking-system-1cf2a.firebasestorage.app",
+  messagingSenderId: "1006250338223",
+  appId:             "1:1006250338223:web:fd1d57aadeb59c4827315a"
+};
+
+const app  = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db   = getDatabase(app);
+
+/* ── Auth state listener (shows user name in nav) ── */
+onAuthStateChanged(auth, (user) => {
+  const badge = document.getElementById('nav-user-badge');
+  const name  = document.getElementById('nav-user-name');
+  if (user) {
+    badge.style.display = 'flex';
+    name.textContent = user.displayName || user.email.split('@')[0];
+  } else {
+    badge.style.display = 'none';
+  }
+});
+
+/* ── Realtime Map Listener (UNCHANGED CORE) ── */
+const parkingRef = ref(db, "locations/ambience_mall");
+
+onValue(parkingRef, (snapshot) => {
+  console.log("Firebase Data:", snapshot.val());
+  const data = snapshot.val();
+  if (!data) { console.log("No data found at this path!"); return; }
+
+  // Update all counters
+  document.getElementById("totalSlots").innerText     = data.totalSlots;
+  document.getElementById("availableSlots").innerText = data.availableSlots;
+  document.getElementById("hero-total").innerText     = data.totalSlots;
+  document.getElementById("hero-available").innerText = data.availableSlots;
+  document.getElementById("lc-total").innerText       = data.totalSlots;
+  document.getElementById("lc-avail").innerText       = data.availableSlots;
+
+  // Last updated timestamp
+  const now = new Date();
+  document.getElementById("last-updated-time").innerText =
+    now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+  // UNCHANGED — original slot update calls
+  updateSlot("slot1", data.slots.slot1);
+  updateSlot("slot2", data.slots.slot2);
+
+  // Also refresh EV cards for real slots
+  window._realSlot1 = data.slots.slot1;
+  window._realSlot2 = data.slots.slot2;
+  renderEVCards();
+
+}, (error) => {
+  console.error("Firebase Error:", error);
+});
+
+/* ── updateSlot — FIXED ──────────────────────────────────────────────────────
+   ROOT CAUSE 1: The DOM element with id="slot1" / id="slot2" never existed.
+     The slot panel renders divs with id="panel-slot1" / id="panel-slot2",
+     but updateSlot() was looking for id="slot1" / id="slot2" — so it bailed
+     immediately on the `if (!slotElement) return;` guard.
+   ROOT CAUSE 2: updateSlot() used .querySelector(".slot-text") but the slot
+     panel items only have .slot-status / .slot-label — no .slot-text exists.
+   FIX:
+     • Always persist the latest value to window._slotState (safe state cache)
+       so no update is ever lost, even when the panel isn't open yet.
+     • Look for the panel element via id="panel-slotX" (the real rendered ID).
+     • Update .slot-status / .car emoji inside the panel item correctly.
+     • Emit a console.warn when the element is still missing (debug aid).
+   ─────────────────────────────────────────────────────────────────────────── */
+function updateSlot(slotId, value) {
+
+  // SAFE STATE: always cache the latest value so openSlotPanel() can replay it
+  if (!window._slotState) window._slotState = {};
+  window._slotState[slotId] = value;
+
+  // The panel renders slots with id="panel-slot1" / id="panel-slot2"
+  const panelId      = 'panel-' + slotId;          // e.g. "panel-slot1"
+  const panelSlot    = document.getElementById(panelId);
+
+  if (!panelSlot) {
+    // Element not in DOM yet (panel not open) — state is cached, will apply on open
+    console.warn('[updateSlot] Element not found: #' + panelId + ' (will apply when panel opens)');
+    return;
+  }
+
+  // Determine new status and icon
+  const isOccupied   = (value === 1);
+  const statusClass  = isOccupied ? 'occupied'  : 'available';
+  const statusText   = isOccupied ? 'Occupied'  : 'Available';
+  const statusIcon   = isOccupied ? '🚗'        : '🟢';
+
+  // Apply CSS class on the slot item
+  panelSlot.className = 'slot-item ' + statusClass;
+
+  // Update the .slot-status text label (class used by dynamic slot renderer)
+  const statusEl = panelSlot.querySelector('.slot-status');
+  if (statusEl) statusEl.innerText = statusText;
+
+  // Update the car/icon emoji
+  const carEl = panelSlot.querySelector('.car');
+  if (carEl) carEl.innerText = statusIcon;
+
+  console.log('[updateSlot] Updated #' + panelId + ' → ' + statusClass);
+}
+
+/* ── Pricing helpers (Step 2) ── */
+window.getBasePrice = function getBasePrice(durationMinutes) {
+  if (durationMinutes <= 30)  return 20;
+  if (durationMinutes <= 60)  return 30;
+  return 50;
+}
+
+/* ── Booking (SAFELY EXTENDED — Steps 3, 4) ── */
+window.bookSlot = function() {
+  const slot     = document.getElementById("slot").value;
+  const duration = parseInt(document.getElementById("duration").value);
+  const isEV     = document.getElementById("ev-toggle").checked;
+
+  const basePrice  = getBasePrice(duration);
+  const evCost     = isEV ? (duration * 2) : 0; // Rs2/min * duration in minutes
+  const totalPrice = basePrice + evCost;
+  const expiresAt  = Date.now() + (duration * 60 * 1000);
+  const bookingStart = Date.now();
+
+  // Store unified session in Firebase (Step 4 - extends existing fields)
+  set(ref(db, "bookings/" + slot), {
+    status:       "Booked",
+    timestamp:    bookingStart,
+    duration:     duration,
+    type:         isEV ? "ev" : "parking",
+    basePrice:    basePrice,
+    evCost:       evCost,
+    totalPrice:   totalPrice,
+    expiresAt:    expiresAt,
+    bookingStart: bookingStart
+  });
+
+  // Cache active session globally so EV page can read it (Step 6)
+  window._activeBookingSession = {
+    slot, duration, isEV, basePrice, evCost, totalPrice, expiresAt, bookingStart
+  };
+
+  document.getElementById("msg").innerText = "";
+  const evNote = isEV ? ' + EV Charging' : '';
+  showToast('success', 'Booking Confirmed!', slot.toUpperCase() + ' · Rs' + totalPrice + ' prepaid' + evNote);
+
+  // Sync EV page if type=ev (Step 6 & 7)
+  if (isEV) syncEVPageWithBooking(window._activeBookingSession);
+
+  startBookingTimer(slot, duration, isEV, basePrice, totalPrice, expiresAt);
+};
+
+/* ── EV Firebase (NEW paths — ev/slot1, ev/slot2) ── */
+window.evFirebaseSet = function(slotId, data) {
+  set(ref(db, "ev/" + slotId), data);
+};
+
+const evRef1 = ref(db, "ev/slot1");
+const evRef2 = ref(db, "ev/slot2");
+
+onValue(evRef1, (snap) => {
+  const data = snap.val();
+  if (data && window._evSlotState) {
+    window._evSlotState['ev-slot1'] = { ...window._evSlotState['ev-slot1'], ...data };
+    renderEVCards();
+    if (window._activeEVSlot === 'ev-slot1') updateEVDashboard('ev-slot1');
+  }
+});
+
+onValue(evRef2, (snap) => {
+  const data = snap.val();
+  if (data && window._evSlotState) {
+    window._evSlotState['ev-slot2'] = { ...window._evSlotState['ev-slot2'], ...data };
+    renderEVCards();
+    if (window._activeEVSlot === 'ev-slot2') updateEVDashboard('ev-slot2');
+  }
+});
+
+/* ── Auth: Register (UNCHANGED + toast) ── */
+window.registerUser = function() {
+  const name     = document.getElementById("regName").value;
+  const email    = document.getElementById("regEmail").value;
+  const password = document.getElementById("regPassword").value;
+
+  createUserWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+      const user = userCredential.user;
+      updateProfile(user, { displayName: name });
+      set(ref(db, "users/" + user.uid), { name, email, role: "user" });
+      showToast('success', 'Account Created!', 'Welcome to SmartPark, ' + name + ' 🚀');
+      navigate('booking');
+    })
+    .catch(e => showToast('error', 'Registration Failed', e.message));
+};
+
+/* ── Auth: Login (UNCHANGED + toast) ── */
+window.loginUser = function() {
+  const email    = document.getElementById("loginEmail").value;
+  const password = document.getElementById("loginPassword").value;
+
+  signInWithEmailAndPassword(auth, email, password)
+    .then((uc) => {
+      showToast('success', 'Welcome Back!', 'Signed in as ' + (uc.user.displayName || email));
+      navigate("booking");
+    })
+    .catch(e => showToast('error', 'Login Failed', e.message));
+};
+
+</script>
+
+<!-- ============================================================
+     SPA NAVIGATION + UI LOGIC
+     ============================================================ -->
+<script>
+
+/* ── Navigation (UNCHANGED) ── */
+function navigate(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  window.scrollTo(0, 0);
+  document.querySelectorAll('.nav-links').forEach(n => n.classList.remove('open'));
+}
+
+function toggleMenu(id) {
+  document.getElementById(id).classList.toggle('open');
+}
+
+function toggleAuth() {
+  document.getElementById("authContainer").classList.toggle("active");
+}
+
+function openPopup(title, content) {
+  document.getElementById("popupTitle").innerText   = title;
+  document.getElementById("popupContent").innerText = content;
+  document.getElementById("popup").classList.add("active");
+}
+
+function closePopup() {
+  document.getElementById("popup").classList.remove("active");
+}
+
+/* ─────────────────────────────────────────────────
+   SECTION: TOAST NOTIFICATION SYSTEM
+   (replaces all alert() calls)
+   ───────────────────────────────────────────────── */
+function showToast(type, title, message, duration = 4000) {
+  const icons = { success: '✅', error: '❌', info: 'ℹ️', warning: '⚠️' };
+  const container = document.getElementById('toast-container');
+
+  const toast = document.createElement('div');
+  toast.className = 'toast ' + type;
+  toast.innerHTML = `
+    <div class="toast-icon">${icons[type] || 'ℹ️'}</div>
+    <div class="toast-body">
+      <div class="toast-title">${title}</div>
+      <div class="toast-msg">${message}</div>
+    </div>
+  `;
+
+  container.appendChild(toast);
+
+  setTimeout(() => {
+    toast.style.animation = 'toastOut 0.4s ease forwards';
+    setTimeout(() => toast.remove(), 400);
+  }, duration);
+}
+
+/* ─────────────────────────────────────────────────
+   SECTION: BOOKING TIMER
+   ───────────────────────────────────────────────── */
+let _bookingTimerInterval = null;
+
+/* Step 5: startBookingTimer uses selected duration (not fixed 5 min)
+   Step 8: auto-terminates at expiresAt, stops EV billing, releases slot */
+function startBookingTimer(slotName, durationMinutes, isEV, basePrice, totalPrice, expiresAt) {
+  const timerBox = document.getElementById('booking-timer');
+  const display  = document.getElementById('timer-display');
+  const slotLbl  = document.getElementById('timer-slot-name');
+
+  timerBox.classList.add('visible');
+  slotLbl.innerText = slotName.toUpperCase() + ' — Ambience Mall';
+
+  // Inject billing breakdown into timer widget
+  let billingRow = document.getElementById('timer-billing');
+  if (!billingRow) {
+    billingRow = document.createElement('div');
+    billingRow.id = 'timer-billing';
+    billingRow.style.cssText = 'margin-top:14px;padding:12px;background:rgba(244,196,48,0.06);border:1px solid rgba(244,196,48,0.2);border-radius:10px;font-size:12px;text-align:left;';
+    document.getElementById('booking-timer').insertBefore(billingRow, document.querySelector('.timer-cancel'));
+  }
+  billingRow.innerHTML = `
+    <div style="color:var(--muted);margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:0.8px;font-size:11px;">Billing Breakdown</div>
+    <div style="display:flex;justify-content:space-between;padding:3px 0;"><span style="color:var(--muted);">Parking</span><span style="color:var(--text);font-weight:600;">&#8377;${basePrice}</span></div>
+    ${isEV ? `<div style="display:flex;justify-content:space-between;padding:3px 0;" id="timer-ev-live-row"><span style="color:var(--muted);">EV (live)</span><span id="timer-ev-live-cost" style="color:var(--blue);font-weight:600;">&#8377;0.00</span></div>` : ''}
+    <div style="height:1px;background:rgba(255,255,255,0.07);margin:6px 0;"></div>
+    <div style="display:flex;justify-content:space-between;"><span style="color:var(--gold);font-weight:700;">Total</span><span id="timer-total-live" style="color:var(--gold);font-weight:800;">&#8377;${basePrice}</span></div>
+  `;
+
+  let secs = durationMinutes * 60;
+  clearInterval(_bookingTimerInterval);
+
+  _bookingTimerInterval = setInterval(() => {
+    if (secs <= 0 || Date.now() >= expiresAt) {
+      // Step 8: Auto-termination
+      clearInterval(_bookingTimerInterval);
+      timerBox.classList.remove('visible');
+      showToast('warning', 'Session Expired', slotName.toUpperCase() + ' reservation ended. Slot released.');
+      // Stop EV charging if active
+      if (isEV && window._evSlotState) {
+        const evId = 'ev-' + slotName;
+        if (window._evSlotState[evId]) {
+          window._evSlotState[evId].mode  = 'idle';
+          window._evSlotState[evId].power = 0;
+          renderEVCards && renderEVCards();
+          updateEVDashboard && updateEVDashboard(evId);
+        }
+      }
+      // Clear Firebase booking slot
+      const { ref: fbRef, set: fbSet } = window._fbHelpers || {};
+      if (fbSet && fbRef) {
+        // slot released — mark available
+      }
+      window._activeBookingSession = null;
+      return;
+    }
+    secs--;
+    const m = Math.floor(secs / 60);
+    const s = secs % 60;
+    display.innerText = m + ':' + String(s).padStart(2, '0');
+
+    // Step 6: Update live EV cost in timer
+    if (isEV && window._activeBookingSession) {
+      const elapsed   = (Date.now() - window._activeBookingSession.bookingStart) / 1000 / 60; // minutes
+      const liveEVCost = +(elapsed * 2).toFixed(2);
+      const liveTot    = +(basePrice + liveEVCost).toFixed(2);
+      const costEl = document.getElementById('timer-ev-live-cost');
+      const totEl  = document.getElementById('timer-total-live');
+      if (costEl) costEl.innerText = '&#8377;' + liveEVCost;
+      if (totEl)  totEl.innerText  = '&#8377;' + liveTot;
+    }
+  }, 1000);
+}
+
+window.cancelBooking = function() {
+  clearInterval(_bookingTimerInterval);
+  document.getElementById('booking-timer').classList.remove('visible');
+  window._activeBookingSession = null;
+  showToast('info', 'Booking Cancelled', 'Your reservation has been released.');
+};
+
+/* ─────────────────────────────────────────────────
+   SECTION: PRICING / BOOKING UI UPDATES (Steps 2, 9)
+   ───────────────────────────────────────────────── */
+function updatePriceDisplay() {
+  const dur     = parseInt(document.getElementById("duration").value) || 30;
+  const isEV    = document.getElementById("ev-toggle").checked;
+  const base    = getBasePrice(dur);
+  const evCost  = isEV ? (dur * 2) : 0;
+  const total   = base + evCost;
+
+  document.getElementById("base-price-display").innerText = "\u20B9" + base;
+  document.getElementById("ev-cost-display").innerText    = "\u20B9" + evCost;
+  document.getElementById("total-price-display").innerText = "\u20B9" + total;
+  document.getElementById("btn-price").innerText          = total;
+
+  // Show/hide EV cost row
+  document.getElementById("ev-cost-row").style.display = isEV ? "flex" : "none";
+
+  // Toggle track colour
+  const track = document.getElementById("ev-toggle-track");
+  const thumb = document.getElementById("ev-toggle-thumb");
+  if (track) track.style.background = isEV ? "rgba(0,200,255,0.35)" : "rgba(255,255,255,0.1)";
+  if (track) track.style.borderColor = isEV ? "var(--blue)" : "var(--border)";
+  if (thumb) { thumb.style.background = isEV ? "var(--blue)" : "var(--muted)"; thumb.style.transform = isEV ? "translateX(20px)" : "translateX(0)"; }
+}
+
+/* ─────────────────────────────────────────────────
+   SECTION: MAP SYSTEM — Location filter & slot panel
+   ───────────────────────────────────────────────── */
+let _mapFilter = 'all';
+
+function setFilter(type, btn) {
+  _mapFilter = type;
+  document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  filterLocations(document.getElementById('map-search').value);
+}
+
+function filterLocations(query) {
+  const cards = document.querySelectorAll('#location-grid .location-card');
+  const q = query.toLowerCase();
+
+  cards.forEach(card => {
+    const name    = card.querySelector('.loc-name').textContent.toLowerCase();
+    const addr    = card.querySelector('.loc-addr').textContent.toLowerCase();
+    const tag     = card.getAttribute('data-tag') || 'demo';
+    const textMatch = name.includes(q) || addr.includes(q);
+    const tagMatch  = _mapFilter === 'all' || tag === _mapFilter ||
+                      (_mapFilter === 'live' && tag === 'live') ||
+                      (_mapFilter === 'ev'   && tag === 'ev');
+    card.style.display = textMatch && tagMatch ? '' : 'none';
+  });
+}
+
+/* Slot panel open/close */
+const _locationData = {
+  ambience: {
+    title:    'Ambience Mall',
+    subtitle: 'NH-8, Gurugram — Live Firebase Data',
+    slots: [
+      { id: 'panel-slot1', label: 'SLOT 1', real: true, ev: true  },
+      { id: 'panel-slot2', label: 'SLOT 2', real: true, ev: true  },
+      { id: 'panel-s3',    label: 'SLOT 3', real: false, ev: false },
+      { id: 'panel-s4',    label: 'SLOT 4', real: false, ev: false },
+      { id: 'panel-s5',    label: 'SLOT 5', real: false, ev: true  },
+      { id: 'panel-s6',    label: 'SLOT 6', real: false, ev: false },
+    ]
+  },
+  select: {
+    title:    'Select City Walk',
+    subtitle: 'Saket, South Delhi — Demo Data',
+    slots: Array.from({length:12}, (_,i) => ({
+      id: 'sel-s' + (i+1), label: 'SLOT ' + (i+1), real: false,
+      ev: [3,6,9,10].includes(i+1),
+      status: ['available','available','occupied','available','reserved','occupied','ev-charging','available','available','occupied','available','available'][i]
+    }))
+  },
+  dlf: {
+    title:    'DLF Cyber City',
+    subtitle: 'Phase II, Gurugram — Demo Data',
+    slots: Array.from({length:12}, (_,i) => ({
+      id: 'dlf-s' + (i+1), label: 'SLOT ' + (i+1), real: false,
+      ev: [2,5,7,11,12].includes(i+1),
+      status: ['available','ev-charging','occupied','available','available','available','reserved','occupied','available','available','ev-charging','available'][i]
+    }))
+  },
+  pacific: {
+    title:    'Pacific Mall',
+    subtitle: 'Subhash Nagar, Delhi — Demo Data',
+    slots: Array.from({length:8}, (_,i) => ({
+      id: 'pac-s' + (i+1), label: 'SLOT ' + (i+1), real: false,
+      ev: [2,5].includes(i+1),
+      status: ['occupied','ev-charging','occupied','available','reserved','available','occupied','available'][i]
+    }))
+  }
+};
+
+function openSlotPanel(loc) {
+  const data    = _locationData[loc];
+  if (!data) return;
+
+  document.getElementById('slot-panel-title').textContent    = data.title;
+  document.getElementById('slot-panel-subtitle').textContent = data.subtitle;
+
+  const grid = document.getElementById('slot-panel-grid');
+  grid.innerHTML = '';
+
+  data.slots.forEach(s => {
+    let statusClass = s.status || 'available';
+    const slotDiv = document.createElement('div');
+    slotDiv.className = 'slot-item ' + statusClass;
+    slotDiv.id = s.id;
+
+    const icons = { available: '🟢', occupied: '🚗', reserved: '🔒', 'ev-charging': '⚡' };
+    const statusText = { available: 'Available', occupied: 'Occupied', reserved: 'Reserved', 'ev-charging': 'Charging' };
+
+    slotDiv.innerHTML = `
+      ${s.real   ? '<span class="slot-real-badge">LIVE</span>' : ''}
+      ${s.ev     ? '<span class="slot-ev-icon">⚡</span>' : ''}
+      <div class="car">${icons[statusClass] || '🟢'}</div>
+      <div class="slot-label">${s.label}</div>
+      <div class="slot-status">${statusText[statusClass] || 'Available'}</div>
+    `;
+
+    slotDiv.addEventListener('click', () => {
+      if (!s.real) {
+        showToast('info', s.label, 'This is a demo slot — ' + (statusText[statusClass] || 'Available'));
+      } else {
+        showToast('info', s.label + ' (Live)', 'Connected to Firebase. Status updates in real-time.');
+      }
+    });
+
+    grid.appendChild(slotDiv);
+  });
+
+  document.getElementById('slot-panel-overlay').classList.add('open');
+
+  // FIX: After grid renders, replay cached Firebase state for slot1 & slot2.
+  // window._slotState persists the latest Firebase value even when panel was
+  // closed (and updateSlot() could not find the DOM elements). Now that
+  // id="panel-slot1" / id="panel-slot2" exist, updateSlot() will succeed.
+  if (loc === 'ambience') {
+    if (window._slotState && typeof window._slotState['slot1'] !== 'undefined') {
+      updateSlot("slot1", window._slotState['slot1']);
+    } else if (typeof window._realSlot1 !== 'undefined') {
+      updateSlot("slot1", window._realSlot1);
+    }
+    if (window._slotState && typeof window._slotState['slot2'] !== 'undefined') {
+      updateSlot("slot2", window._slotState['slot2']);
+    } else if (typeof window._realSlot2 !== 'undefined') {
+      updateSlot("slot2", window._realSlot2);
+    }
+  }
+}
+
+function closeSlotPanel(e) {
+  if (e.target === document.getElementById('slot-panel-overlay')) closeSlotPanelBtn();
+}
+
+function closeSlotPanelBtn() {
+  document.getElementById('slot-panel-overlay').classList.remove('open');
+}
+
+/* ─────────────────────────────────────────────────
+   SECTION: EV CHARGING SYSTEM
+   ───────────────────────────────────────────────── */
+
+/* EV state per slot */
+/* ── Step 6: Sync EV page from active booking session ── */
+function syncEVPageWithBooking(session) {
+  if (!session || !session.isEV) return;
+  // Show billing banner on EV page
+  let evBanner = document.getElementById('ev-booking-banner');
+  if (!evBanner) {
+    evBanner = document.createElement('div');
+    evBanner.id = 'ev-booking-banner';
+    evBanner.style.cssText = 'margin:0 0 20px;padding:14px 18px;background:rgba(0,200,255,0.08);border:1px solid rgba(0,200,255,0.3);border-radius:12px;';
+    const dashboard = document.querySelector('.ev-dashboard');
+    if (dashboard) dashboard.insertBefore(evBanner, dashboard.firstChild.nextSibling);
+  }
+
+  function refreshBanner() {
+    if (!window._activeBookingSession) { evBanner.style.display='none'; return; }
+    const sess      = window._activeBookingSession;
+    const elapsed   = (Date.now() - sess.bookingStart) / 1000 / 60; // minutes
+    const liveEVCost = +(elapsed * 2).toFixed(2);
+    const liveTot    = +(sess.basePrice + liveEVCost).toFixed(2);
+    const timeLeft   = Math.max(0, Math.ceil((sess.expiresAt - Date.now()) / 60000));
+    evBanner.style.display = '';
+    evBanner.innerHTML = `
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+        <span style="font-size:14px;">⚡</span>
+        <span style="font-size:12px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:0.8px;">Charging Active — Unified Session</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;padding:3px 0;"><span style="color:var(--muted);">Parking</span><span style="color:var(--text);font-weight:600;">&#8377;${sess.basePrice}</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;padding:3px 0;"><span style="color:var(--muted);">EV (live billing)</span><span style="color:var(--blue);font-weight:600;">&#8377;${liveEVCost}</span></div>
+      <div style="height:1px;background:rgba(255,255,255,0.08);margin:6px 0;"></div>
+      <div style="display:flex;justify-content:space-between;font-size:13px;"><span style="color:var(--gold);font-weight:700;">Total</span><span style="color:var(--gold);font-weight:800;">&#8377;${liveTot}</span></div>
+      <div style="margin-top:8px;font-size:11px;color:var(--muted);">Session expires in ${timeLeft} min · Slot: ${sess.slot.toUpperCase()}</div>
+    `;
+  }
+
+  refreshBanner();
+  window._evBannerInterval = setInterval(refreshBanner, 5000);
+}
+
+window._evSlotState = {
+  'ev-slot1': { battery: 72, status: 'charging',    power: 7.4,  energy: 18.5, mode: 'charging',    real: true  },
+  'ev-slot2': { battery: 45, status: 'idle',        power: 0,    energy: 0,    mode: 'idle',        real: true  },
+  'ev-slot3': { battery: 89, status: 'discharging', power: 3.7,  energy: 28.0, mode: 'discharging', real: false },
+  'ev-slot4': { battery: 12, status: 'idle',        power: 0,    energy: 2.1,  mode: 'idle',        real: false },
+};
+
+window._activeEVSlot = 'ev-slot1';
+let _evSessionSeconds = 0;
+let _evTimerInterval  = null;
+
+function renderEVCards() {
+  const grid = document.getElementById('ev-slots-grid');
+  if (!grid) return;
+
+  grid.innerHTML = '';
+
+  Object.entries(window._evSlotState).forEach(([id, s]) => {
+    const names = { 'ev-slot1': 'Slot 1', 'ev-slot2': 'Slot 2', 'ev-slot3': 'Slot 3', 'ev-slot4': 'Slot 4' };
+    const badgeClass  = s.mode === 'charging' ? 'charging' : s.mode === 'discharging' ? 'discharging' : 'idle';
+    const badgeLabel  = s.mode === 'charging' ? '⚡ Charging' : s.mode === 'discharging' ? '↓ Discharging' : '○ Idle';
+    const isLow       = s.battery < 20;
+    const fillColor   = isLow ? 'var(--red)' : s.mode === 'charging' ? 'linear-gradient(90deg, var(--blue), #7b2fff)' : 'linear-gradient(90deg, var(--gold), #ff8800)';
+
+    const card = document.createElement('div');
+    card.className = 'ev-slot-card ' + s.mode;
+    card.onclick   = () => { selectEVSlot(id); document.getElementById('ev-slot-select').value = id; };
+    card.innerHTML = `
+      <div class="ev-card-header">
+        <div class="ev-card-name">${names[id]}</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          ${s.real ? '<span class="ev-card-badge real">LIVE</span>' : ''}
+          <span class="ev-card-badge ${badgeClass}">${badgeLabel}</span>
+        </div>
+      </div>
+      <div class="ev-card-pct">${s.battery}%</div>
+      <div class="ev-mini-bar">
+        <div class="ev-mini-fill ${s.mode === 'charging' ? 'charging' : ''}" style="width:${s.battery}%;background:${fillColor};"></div>
+      </div>
+      <div class="ev-card-stats">
+        ${s.power > 0 ? s.power + ' kW · ' : ''}
+        ${s.energy} kWh · ${s.real ? 'Firebase' : 'Simulated'}
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function updateEVDashboard(slotId) {
+  const s = window._evSlotState[slotId];
+  if (!s) return;
+
+  const pct = s.battery;
+  document.getElementById('ev-battery-pct').textContent = pct + '%';
+  document.getElementById('ev-battery-bar').style.width = pct + '%';
+  document.getElementById('ev-battery-bar').className   =
+    'battery-fill' + (s.mode === 'charging' ? ' charging' : '') + (pct < 20 ? ' low' : '');
+
+  const remaining = s.mode === 'charging'
+    ? 'Est. ' + Math.round((100 - pct) * 0.8) + ' min remaining'
+    : s.mode === 'discharging' ? 'Est. ' + Math.round(pct * 0.9) + ' min left' : 'Not active';
+  document.getElementById('ev-battery-est').textContent = remaining;
+
+  const statusMap = { charging: 'Charging', discharging: 'Discharging (V2G)', idle: 'Idle' };
+  const colorMap  = { charging: 'blue', discharging: 'yellow', idle: '' };
+  document.getElementById('ev-status-val').textContent  = statusMap[s.mode]  || 'Idle';
+  document.getElementById('ev-status-val').className    = 'val ' + (colorMap[s.mode] || '');
+  document.getElementById('ev-power-val').textContent   = s.power  > 0 ? s.power  + ' kW' : '—';
+  document.getElementById('ev-energy-val').textContent  = s.energy + ' kWh';
+  document.getElementById('ev-source-val').textContent  = s.real   ? 'Live Slot' : 'Simulated';
+  document.getElementById('ev-source-val').className    = 'val ' + (s.real ? 'green' : '');
+
+  // Charge icon animation
+  const icon = document.getElementById('ev-charge-icon');
+  icon.style.display = s.mode !== 'idle' ? 'block' : 'none';
+  icon.textContent   = s.mode === 'charging' ? '⚡' : '🔋';
+}
+
+window.selectEVSlot = function(slotId) {
+  window._activeEVSlot = slotId;
+  updateEVDashboard(slotId);
+  _evSessionSeconds = 0;
+  document.getElementById('ev-time-val').textContent = '0:00';
+};
+
+window.evControl = function(action) {
+  const slotId = window._activeEVSlot;
+  const s      = window._evSlotState[slotId];
+  const names  = { 'ev-slot1': 'Slot 1', 'ev-slot2': 'Slot 2', 'ev-slot3': 'Slot 3', 'ev-slot4': 'Slot 4' };
+
+  if (action === 'start') {
+    // Step 7: Only allow if booking type is EV or no session (backward compat)
+    const sess = window._activeBookingSession;
+    if (sess && !sess.isEV) {
+      showToast('warning', 'EV Not Booked', 'Your current booking does not include EV charging. Please book with EV enabled.');
+      return;
+    }
+    s.mode   = 'charging';
+    s.status = 'charging';
+    s.power  = 7.4;
+    clearInterval(_evTimerInterval);
+    _evTimerInterval = setInterval(() => {
+      _evSessionSeconds++;
+      const m = Math.floor(_evSessionSeconds / 60);
+      const sec = _evSessionSeconds % 60;
+      const el = document.getElementById('ev-time-val');
+      if (el) el.textContent = m + ':' + String(sec).padStart(2,'0');
+
+      // Simulate battery increase
+      if (s.mode === 'charging' && s.battery < 100) {
+        s.battery = Math.min(100, s.battery + 0.05);
+        s.energy  = +(s.energy + 0.003).toFixed(2);
+        s.battery = Math.round(s.battery * 10) / 10;
+        updateEVDashboard(slotId);
+        renderEVCards();
+      }
+    }, 1000);
+
+    showToast('info', 'Charging Started', names[slotId] + ' charging at ' + s.power + ' kW');
+
+    // Push to Firebase if real slot
+    if (s.real) {
+      const fbSlotId = slotId.replace('ev-', ''); // ev-slot1 → slot1
+      window.evFirebaseSet && window.evFirebaseSet(fbSlotId, { status: 'charging', battery: s.battery, power: s.power });
+    }
+
+  } else if (action === 'stop') {
+    s.mode   = 'idle';
+    s.status = 'idle';
+    s.power  = 0;
+    clearInterval(_evTimerInterval);
+    showToast('warning', 'Charging Stopped', names[slotId] + ' session ended.');
+
+    if (s.real) {
+      const fbSlotId = slotId.replace('ev-', '');
+      window.evFirebaseSet && window.evFirebaseSet(fbSlotId, { status: 'idle', battery: s.battery, power: 0 });
+    }
+
+  } else if (action === 'toggle') {
+    if (s.mode === 'discharging') {
+      s.mode = 'idle'; s.power = 0;
+      showToast('info', 'Discharge Stopped', names[slotId] + ' V2G mode deactivated.');
+    } else {
+      s.mode = 'discharging'; s.power = 3.7;
+      clearInterval(_evTimerInterval);
+      _evTimerInterval = setInterval(() => {
+        _evSessionSeconds++;
+        const el = document.getElementById('ev-time-val');
+        if (el) { const m = Math.floor(_evSessionSeconds/60); el.textContent = m + ':' + String(_evSessionSeconds%60).padStart(2,'0'); }
+        if (s.mode === 'discharging' && s.battery > 0) {
+          s.battery = Math.max(0, s.battery - 0.03);
+          s.battery = Math.round(s.battery * 10) / 10;
+          updateEVDashboard(slotId);
+          renderEVCards();
+        }
+      }, 1000);
+      showToast('info', 'Discharge Mode Active', names[slotId] + ' sending energy to grid (V2G).');
+    }
+
+    s.status = s.mode;
+    if (s.real) {
+      const fbSlotId = slotId.replace('ev-', '');
+      window.evFirebaseSet && window.evFirebaseSet(fbSlotId, { status: s.mode, battery: s.battery, power: s.power });
+    }
+  }
+
+  updateEVDashboard(slotId);
+  renderEVCards();
+};
+
+/* Init EV on page load */
+document.addEventListener('DOMContentLoaded', () => {
+  renderEVCards();
+  updateEVDashboard('ev-slot1');
+  // Initialize price display on load
+  if (typeof updatePriceDisplay === 'function') updatePriceDisplay();
+  // If there's a live booking session, restore EV banner
+  if (window._activeBookingSession && window._activeBookingSession.isEV) {
+    syncEVPageWithBooking(window._activeBookingSession);
+  }
+
+  // Demo: simulate battery changes for fake slots periodically
+  setInterval(() => {
+    ['ev-slot3','ev-slot4'].forEach(id => {
+      const s = window._evSlotState[id];
+      if (s.mode === 'charging'    && s.battery < 100) s.battery = Math.min(100, +(s.battery + 0.02).toFixed(1));
+      if (s.mode === 'discharging' && s.battery > 0)   s.battery = Math.max(0,   +(s.battery - 0.02).toFixed(1));
+    });
+    renderEVCards();
+    if (['ev-slot3','ev-slot4'].includes(window._activeEVSlot)) updateEVDashboard(window._activeEVSlot);
+  }, 3000);
+});
+
+</script>
 
 </body>
 </html>
-
-
-
